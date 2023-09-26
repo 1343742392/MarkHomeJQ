@@ -15,7 +15,7 @@ body{
     display: flex;
     justify-content:center;
     align-items: center;
-    background-color: rgb(221, 221, 221);
+    /* background-color: rgb(221, 221, 221); */
     height: 100%;
 }
 
