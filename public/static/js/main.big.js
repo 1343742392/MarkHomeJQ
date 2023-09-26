@@ -96,8 +96,8 @@ click-pointer
 flex-md-row 
 align-items-center " title='{{url}}' >
     <div class="file-left">
-        <img  src='{{icon}}' onerror="src='/static/icons/defIcon.png'"
-        style="width:20px">
+        <img class='file-ico' src='{{icon}}' onerror="src='/static/icons/defIcon.png'"
+        >
     </div>
 
     <div class="file-right">
@@ -714,14 +714,11 @@ function addFileView(folderName, file)
     filesDiv.append(thisFileHtml);
     let fileDiv = filesDiv.children().last();
     //判断是否隐藏
-    let disp = markBooks[folderName]['folderDiv'][0].style.display;
-    if(disp == '' || disp == 'none')
+    let color = markBooks[folderName]['folderDiv'][0]['style']['backgroundColor'];
+
+    if(color == '' || color == 'rgb(238, 238, 238)')
     {
         fileDiv.hide();
-    }
-    else
-    {
-        fileDiv.show();
     }
     //保存书签的元素
     markBooks[folderName]['files'][ markBooks[folderName]['files'].length - 1]['fileDiv'] = fileDiv;

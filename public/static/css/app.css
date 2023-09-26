@@ -169,7 +169,7 @@ body{
 }
 
 .file-row{
-    display: none;
+    display: flex;
     width: 100%;
     height: 40px;
 }
@@ -193,6 +193,11 @@ body{
     padding-left: 20px;
     display: flex;
     justify-items: start;
+}
+
+.file-ico{
+    width: 20px;
+    height: 20px;
 }
 
 .file-name{
