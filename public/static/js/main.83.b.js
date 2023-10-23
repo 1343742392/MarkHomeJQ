@@ -636,7 +636,7 @@ function fileClick(obj)
 {
     if(obj.target.localName == 'svg' | obj.target.localName == 'button' |  obj.target.localName == 'path') return;
 
-    window.open (obj.currentTarget.getAttribute('title'),'newwindow'+url)
+    window.open (obj.currentTarget.getAttribute('title'),'newwindow'+obj.currentTarget.getAttribute('title'))
 }
 
 /**
