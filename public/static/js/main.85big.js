@@ -816,12 +816,21 @@ function sync(){
  */
 function importHtmlMB(data){
     var file = data.target.files[0];
+    if(!file)
+    {
+        return;//第一次选择了文件  然后第二次不选择file就会为undefined
+    }
     var reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = function(evt)
     {
         let text = this.result.replace(/^[^,]*,/, "");
         let files = parseMarkBooks(utf8decode(window.atob(text)));
+        if(files.length == 0)
+        {
+            showInfo('导入结果', "未在该文件发现书签,请选择浏览器导出的HTML文件", true);
+            return;
+        }
         let strFiles =  encodeURIComponent(JSON.stringify(files));
         showInfo('正在导入', "正在导入书签需要一会", false);
         request(
@@ -944,6 +953,9 @@ $(document).ready(function()
     else
     {
         userMailP.text(userMail); 
+        //更新cookie
+        setCookie("mail", userMail, 100);
+        setCookie("token", userToken, 100);
     }
 
     //读取书签
@@ -954,28 +966,29 @@ $(document).ready(function()
         Object.keys(thisMarkBooks).forEach((key) => {
                 importFiles(thisMarkBooks[key]['files']);
             }
-        ) 
+        )
     }
 
     clickFirst();
     //云同步
     sync()
-    //搜索引擎
 
+    //搜索引擎
     searchEngine = getCookie('engine');
     if(!searchEngine)
     {
         searchEngine = 'baidu';
     }
+    else
+    {
+        //更新
+        setCookie('engine', searchEngine,999);
+    }
     if(!(searchEngine in engineUrls))
         searchEngine = 'baidu';
-    console.log(searchEngine)
-    //初始化添加书签文件夹下拉
-    
 
     // addFolder('test');
     // addFile('test',{url:'https://getbootstrap.com/docs/4.6/components/alerts/', name:"tst"});
-
     //showInfo('test','msg', false);
 
 });

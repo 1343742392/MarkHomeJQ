@@ -21,4 +21,5 @@ function clearCookie(name) {
     setCookie(name, "", -1);
 }
 
+
 export{setCookie, getCookie, clearCookie};
