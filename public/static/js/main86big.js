@@ -58,7 +58,7 @@ Object.defineProperty(markBooks, 'deleteAll', {
 })
 
 
-
+let mbLeft = null;
 let foldersDiv = null;
 let activeFolder = null;
 let deleteing = false;
@@ -227,6 +227,7 @@ function back()
         pageList[pageList.length - 1].hide();
         pageList.pop();
         pageList[pageList.length - 1].show();
+        if(pageList[pageList.length - 1] == homePage) setFolderMargin();
     }
 }
 
@@ -350,6 +351,7 @@ function findE()
     dialogMsgP= $("#dialogMsgP");
     dialogCloseBtn = $("#dialogCloseBtn");
 
+    mbLeft = $("#mb-left");
     foldersDiv = $('#foldersDiv');
     filesDiv = $('#filesDiv');
 
@@ -545,6 +547,7 @@ function delFolder(obj)
                 delete markBooks[folderName];
                 activeFolder = null;
                 clickFirst();
+                setFolderMargin()
                 saveMarkBook();
             }
             },
@@ -584,6 +587,7 @@ function addFolder(name = '其他')
     markBooks[name] = {folderDiv: folderDiv, files:[]};
     folderDiv.click(folderClick);
     folderDiv.children().last().click(delFolder);
+    setFolderMargin();
 }
 
 /**
@@ -723,6 +727,7 @@ function addFileView(folderName, file)
     //保存书签的元素
     markBooks[folderName]['files'][ markBooks[folderName]['files'].length - 1]['fileDiv'] = fileDiv;
     filesDiv.children().last().click(fileClick);
+    setFolderMargin();
 }
 
 /**
@@ -863,6 +868,7 @@ function importFiles(inputMB){
         if(!(folderName in markBooks))
         {
             addFolder(folderName);
+            setFolderMargin();
         }
         markBooks[folderName]['files'].push(inputMB[i]);
         addFileView(folderName, inputMB[i]);
@@ -919,6 +925,23 @@ function clickFirst()
 }
 
 /**
+ * 调整文件夹margin
+ */
+function setFolderMargin()
+{
+    if(homePage.css('display') == 'none')return;
+
+    let mbLeftH = mbLeft.height();
+    let foldersDivH = foldersDiv.height();
+    if(foldersDivH < mbLeftH)
+    {
+        foldersDiv.css("margin-top",(mbLeftH - foldersDivH) + 'px');
+    }
+    else
+        foldersDiv.css("margin-top",'unset');
+}
+
+/**
  * 初始化下拉
  */
 function setSelect() 
@@ -969,7 +992,6 @@ $(document).ready(function()
         )
     }
 
-    clickFirst();
     //云同步
     sync()
 
@@ -986,6 +1008,10 @@ $(document).ready(function()
     }
     if(!(searchEngine in engineUrls))
         searchEngine = 'baidu';
+    
+    //调整布局    
+    clickFirst();
+    setFolderMargin();
 
     // addFolder('test');
     // addFile('test',{url:'https://getbootstrap.com/docs/4.6/components/alerts/', name:"tst"});
@@ -993,7 +1019,9 @@ $(document).ready(function()
 
 });
 
-
+window.onresize = function(){
+    setFolderMargin()
+}
 /** 
  * @param {String} errorMessage  错误信息 
  * @param {String} scriptURI   出错的文件 

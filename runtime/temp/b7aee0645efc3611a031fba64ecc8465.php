@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:83:"D:\MyFile\Code\Website\MarkHomeJQ\public/../application/index\view\index\index.html";i:1698303191;s:77:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\markbook.html";i:1675327313;s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:83:"D:\MyFile\Code\Website\MarkHomeJQ\public/../application/index\view\index\index.html";i:1701776005;s:77:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\markbook.html";i:1701771662;s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
 <!DOCTYPE html>
 <html lang="zh" style="height:100%">
 <head>
@@ -8,13 +8,13 @@
     <link rel='icon' href="favicon.ico">    
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <!-- <script src="/static/js/bootstrap.min.js"></script> -->
-    <link rel="stylesheet" href="/static/css/app.83.css">
+    <link rel="stylesheet" href="/static/css/app84.css">
     <script src="/static/js/jquery.js"></script>
     <script src="/static/js/md5.js"></script>
     <!-- <script type="module" src="/static/js/request"></script> -->
     <script type="text/javascript" src="/static/js/htmlparser.js"></script>
 
-    <script type="module" src="/static/js/main.85.js"></script>
+    <script type="module" src="/static/js/main86.js"></script>
     <script  type="text/javascript">
   
     </script>
@@ -32,7 +32,7 @@
                         </div>
     
                         <div class="modal-body">
-                            <p id="dialogMsgP">Modal body text goes here.</p>
+                            <p id="dialogMsgP"></p>
                         </div>
     
                         <div class="modal-footer">
@@ -71,11 +71,8 @@
                 </div>
 
                 <div class="mark-book radius-card d-flex align-items-end">
-    <div class="mb-left">
-        <div id="foldersDiv" class=
-        'd-flex 
-        flex-column
-        align-items-center' style="">
+    <div id="mb-left" class="mb-left hide-rollbar">
+        <div id="foldersDiv" class='folders align-items-center' >
             
         </div>
     </div>

@@ -124,7 +124,16 @@ body{
 
 .mb-left{
     width: 25%;
+
+    overflow-x: hidden;
+    height: 100%;
+
+    overflow-y: scroll;
+}
+
+.folders{
     display: flex;
+    justify-content: flex-end;
     justify-self: end;
     flex-direction: column;
 }
@@ -165,7 +174,7 @@ body{
     flex-direction: column;
     justify-content: flex-end;
     /* height: 1500px; */
-    margin-top: 100px;
+    /* margin-top: 100px; */
 }
 
 .file-row{
