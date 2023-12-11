@@ -28,7 +28,7 @@ return [
         ]
     ]), 
     // 应用调试模式
-    'app_debug'              => true,
+    'app_debug'              => false,
 
     //get_url调试
     'get_url_debug'          => false,

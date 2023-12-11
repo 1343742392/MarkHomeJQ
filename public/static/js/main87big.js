@@ -275,7 +275,6 @@ function selectEngine(data)
     engineBtns[nextEngine].click(null);
     searchEngine = nextEngine;
     setCookie('engine', nextEngine, 999);
-    console.log(data);
 }
 
 /**
@@ -310,14 +309,13 @@ function regOrReg()
             userMailP.text(mail); 
             setCookie("token", mapRes["token"], 100);
             userToken = mapRes["token"];
+            switchPage(homePage)
             if("data" in mapRes)
             {
                 importFiles(mapRes['data']);
                 saveMarkBook();
                 clickFirst();
             }
-            loginPage.hide();
-            homePage.show();
         }
         else if(mapRes["code"] == 401)
         {
@@ -410,16 +408,19 @@ function setEvent()
 
     //退出登录
     $("#loginOutBtn").click(function(){
-        pageList.pop();
-        userPage.hide();
-        loginPage.show();
-        foldersDiv.html("");
-        filesDiv.html("");
-        markBooks.deleteAll();
+        //清空cookie 直接刷新bug少
+        // pageList=[];
+        // userPage.hide();
+        // loginPage.show();
+        // foldersDiv.html("");
+        // filesDiv.html("");
+        // markBooks.deleteAll();
         clearCookie('mail');
         clearCookie("token");
         window.localStorage.removeItem("mark_books");
-        activeFolder = '';
+
+        location.reload();
+        // activeFolder = '';
     })
 
     //打开添加页书签
@@ -929,7 +930,7 @@ function clickFirst()
  */
 function setFolderMargin()
 {
-    if(homePage.css('display') == 'none')return;
+    if(homePage.css('display') == 'none')return;//没显示高度就为0没法计算  要放在切换页面后面
 
     let mbLeftH = mbLeft.height();
     let foldersDivH = foldersDiv.height();
@@ -969,8 +970,7 @@ $(document).ready(function()
     userMail = getCookie('mail');
     if(!userMail)
     {
-        loginPage.show();
-        homePage.hide();
+        switchPage(loginPage)
         return;
     }
     else

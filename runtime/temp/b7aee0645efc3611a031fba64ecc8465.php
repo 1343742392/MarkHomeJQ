@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:83:"D:\MyFile\Code\Website\MarkHomeJQ\public/../application/index\view\index\index.html";i:1701776005;s:77:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\markbook.html";i:1701771662;s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:83:"D:\MyFile\Code\Website\MarkHomeJQ\public/../application/index\view\index\index.html";i:1702297906;s:77:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\markbook.html";i:1701771662;s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
 <!DOCTYPE html>
 <html lang="zh" style="height:100%">
 <head>
@@ -14,7 +14,7 @@
     <!-- <script type="module" src="/static/js/request"></script> -->
     <script type="text/javascript" src="/static/js/htmlparser.js"></script>
 
-    <script type="module" src="/static/js/main86.js"></script>
+    <script type="module" src="/static/js/main87.js"></script>
     <script  type="text/javascript">
   
     </script>
