@@ -23,18 +23,30 @@ let url = "";
  }
  */
 let markBooks = {
+    /**
+     * 
+     * @param {回调函数:forEachFile((file)=>{ return 0;返回1就结束循环})} back 
+     */
     forEachFile:function(back)
     {
         this.forEachFolder((folder)=>{
+            let res = 0;
             for(let index in folder.files)
-                back(folder.files[index]);
+            {
+                res =  back(folder.files[index]);
+                if(!!res) return 1;
+            }
         })
     },
     forEachFolder:function(back)
     {
-        Object.keys(markBooks).forEach((folderName)=>{
-            back(markBooks[folderName]);
-        })
+        let res = 0;
+        let keys = Object.keys(markBooks)
+        for(let i = 0; i < keys.length; i ++)
+        {
+            res = back(markBooks[keys[i]]);
+            if(!!res) return 1;
+        }
     },
     deleteAll:function(){
         let mbkes = Object.keys(markBooks);
@@ -61,7 +73,10 @@ Object.defineProperty(markBooks, 'deleteAll', {
 let mbLeft = null;
 let foldersDiv = null;
 let activeFolder = null;
-let deleteing = false;
+/**
+ * homeState = {'ide', 'del', 'edit', 'editing'}
+ */
+let homeState = 'ide';
 let searchEngine = "baidu";
 let searchBtn = null;
 let searchWordInput = null;
@@ -74,13 +89,13 @@ baidu:"https://www.baidu.com/s?ie=UTF-8&wd="
 let engineBtns = {};
 let folderHtml =  
 `
-<div class="folder row w-100 click-pointer " title='{{fullName}}'>
+<div class="folder row w-100 click-pointer " '>
     <p class="folder-name">{{name}}</p>
     <svg  class="folder-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
     </svg>
 
-    <button type="button" class="del-btn btn btn-sm btn-danger"  title='{{fullName}}' style='display:none'>
+    <button type="button" class="del-btn btn btn-sm btn-danger"  style='display:none'>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fff" class="bi bi-trash3" viewBox="0 0 16 16">
             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"/>
         </svg>
@@ -158,6 +173,10 @@ let folderSelectHtml =
 `
 let addFileBtn = null;
 
+//编辑页
+let editFolderPage = null;
+let editFilePage = null;
+let editFileId = null;
 //对话框
 let dialogDiv = null;
 let dailogTitleH = null;
@@ -198,6 +217,7 @@ function hideInfo(forceClose = false)
  */
 function switchPage(objPage)
 {
+    if(objPage == editFilePage || objPage == editFolderPage) homeState = 'editing';
     pageList[pageList.length - 1].hide();
     objPage.show();
     pageList.push(objPage);
@@ -209,9 +229,10 @@ function switchPage(objPage)
  */
 function back()
 {
-    if(deleteing)
-    {//退出删除状态
-        deleteing = false;
+    //删除页或者编辑页返回
+    if(homeState == 'del' || homeState == 'edit') 
+    {   
+        //显示home页上下
         $('#homeHeadDiv').show();
         $('#searchDiv').show();
         $('#homeBackBtn').hide();
@@ -221,7 +242,17 @@ function back()
         markBooks.forEachFile((file)=>{
             file.fileDiv.children().last().hide();
         })
+        homeState = 'ide';
     }
+
+    //编辑中返回
+    if(homeState == 'editing')
+    {
+        //隐藏home页上下
+        $('#homeBackBtn').show();
+        homeState = 'edit';
+    }
+
     if(pageList.length > 1)
     {
         pageList[pageList.length - 1].hide();
@@ -342,6 +373,10 @@ function findE()
 
     userPage = $('#userPage');;
 
+    editFolderPage = $("#editFolderPage");
+
+    editFilePage = $("#editFilePage");
+
     userMailP = $("#userMailP");
 
     dialogDiv = $("#dialogDiv");
@@ -430,10 +465,31 @@ function setEvent()
         switchPage($('#addPage'));
     })
 
+    //编辑页
+    $('#editBtn').click(function()
+    {
+        homeState = 'edit';
+
+        switchPage(homePage);
+        $('#homeHeadDiv').hide();
+        $('#searchDiv').hide();
+        $('#homeBackBtn').show();
+    })
+
+    //修改文件夹名字
+    editFolderPage.find("button").first().click(function(){
+        editFolder(activeFolder, editFolderPage.find('input').prop('value'));
+    });
+
+    //修改文件名字
+    editFilePage.find("button").first().click(function(){
+        editFile();
+    });
+
     //打开删除模式
     $('#delBtn').click(function()
     {
-        deleteing = true;
+        homeState = 'del';
         //显示所有文件删除按钮
         markBooks.forEachFile((file)=>{
             file.fileDiv.children().last().show();
@@ -441,6 +497,7 @@ function setEvent()
         //显示当前文件夹删除按钮
         if(!!activeFolder)
             markBooks[activeFolder]['folderDiv'].children().last().show();
+
         switchPage(homePage);
         $('#homeHeadDiv').hide();
         $('#searchDiv').hide();
@@ -494,6 +551,118 @@ function saveMarkBook(){
 }
 
 /**
+ * editFile
+ */
+function editFile()
+{
+    let fileName = $("#fileNameInput").prop('value');
+    let fileUrl = $("#fileUrlInput").prop('value');
+
+    if(!fileUrl || !fileName)
+    {
+        showInfo("填写错误", "网址 名字 收藏文件 不能为空");
+        return;
+    }
+
+    if(fileName.length > 100)
+        fileName = fileName.substring(0, 100);
+
+    if(fileUrl.length > 2000)
+    {
+        showInfo("填写错误", "url过长");
+        return;
+    }
+
+    if(fileUrl.indexOf('http')!= 0)
+    {
+        showInfo("填写错误", "网址要填写完整包括http(s)://...");
+        return;
+    }
+
+    //本地修改
+    markBooks.forEachFile((file)=>{
+        if(file['i'] == editFileId)
+        {
+            file['name'] = fileName;
+            file['url'] = fileUrl;
+            let p = file['fileDiv'].find('p')[0];
+            p.textContent = fileName;
+
+            file['fileDiv'].attr('title', fileUrl);
+            return 1;
+        }
+    })
+    saveMarkBook();
+
+
+    //云修改
+    request(
+        `mail=${userMail}&token=${userToken}&id=${editFileId}&name=${fileName}&url=${fileUrl}`,
+        url + '/index.php/index/index/editFile',
+        (res)=>{
+            let resMap = JSON.parse(res.currentTarget.response); 
+            if('code' in resMap & resMap['code'] == '200')
+            {
+                showInfo("修改成功", "修改成功");
+            }
+            else
+            {
+                showInfo("修改失败", "修改失败");
+            }
+        },'post'
+    )
+
+}
+
+/**
+ * 设置文件夹名字
+ */
+function editFolder(fromName, toName)
+{
+    toName = toName.trim();
+    if(!toName)
+    {
+        showInfo("填写错误", "文件名字不能为空");
+        return;
+    }
+    if(toName.length>50)
+    {
+        showInfo("填写错误", "文件名字太长了");
+        return;
+    }
+    //本地修改
+    // markBooks[fromName]['folderDiv'].find('p').text(toName);
+
+    // let folderDiv = markBooks[fromName]['folderDiv'];
+    // let files = markBooks[fromName]['files'];
+    // delete  markBooks[fromName]
+    // markBooks[toName] = {};
+    // markBooks[toName]['folderDiv'] = folderDiv;
+    // markBooks[toName]['files'] = files;
+
+    // activeFolder = toName;
+
+    // saveMarkBook();
+    //云修改
+    request(
+        `mail=${userMail}&token=${userToken}&fromName=${fromName}&toName=${toName}`,
+        url + '/index.php/index/index/editFolder',
+        (res)=>{
+            let resMap = JSON.parse(res.currentTarget.response); 
+            if('code' in resMap & resMap['code'] == '200')
+            {
+                sync();
+                showInfo("修改成功", "修改成功");
+            }
+            else
+            {
+                showInfo("修改失败", "修改失败");
+            }
+        },'post'
+    )
+}
+
+/**
  * 删除书签
  */
 function delFile(obj)
@@ -531,7 +700,7 @@ function delFile(obj)
  */
 function delFolder(obj) 
 {
-    let folderName = obj.currentTarget.title;
+    let folderName = obj.currentTarget.parentNode.firstElementChild.textContent;
     request(
         `token=${userToken}&name=${folderName}`,
         url + '/index.php/index/index/delFolder',
@@ -562,27 +731,27 @@ function delFolder(obj)
  */
 function addFolder(name = '其他')
 {
-    let width = 0;
-    let displayName = name;
-    for (let i = 0; i < name.length; i++) {
-        let charCode = name.charCodeAt(i);
-        {
-            if (charCode <= 0x007f) {
-                width += 1.1;
-            } else {
-                width += 2;
-            }
-        }
-        if(width > 8)
-        {
-            displayName = name.substring(0, i - 1);
-            break;
-        }
-    }
+    //名字长度显示限制
+    // let width = 0;
+    // let displayName = name;
+    // for (let i = 0; i < name.length; i++) {
+    //     let charCode = name.charCodeAt(i);
+    //     {
+    //         if (charCode <= 0x007f) 
+    //             width += 1.1;
+    //         else 
+    //             width += 2;
+    //     }
+    //     if(width > 8)
+    //     {
+    //         displayName = name.substring(0, i - 1);
+    //         break;
+    //     }
+    // }
 
-    let thisFolderHtml = folderHtml.replace(/\{\{fullName\}\}/g, name);
+    //let thisFolderHtml = folderHtml.replace(/\{\{fullName\}\}/g, name);
 
-    foldersDiv.append(thisFolderHtml.replace('{{name}}', displayName));
+    foldersDiv.append(folderHtml.replace('{{name}}', name));
 
     let folderDiv = foldersDiv.children().last();
     markBooks[name] = {folderDiv: folderDiv, files:[]};
@@ -592,56 +761,87 @@ function addFolder(name = '其他')
 }
 
 /**
+ * 打开和关闭文件夹 ui处理
+ */
+function switchFolder(objName)
+{
+    //处理文件
+    let index = null;
+    let files = markBooks[objName]['files'];
+    for(index in files)
+    {
+        files[index]['fileDiv'].toggle();
+    }
+
+    //处理文件夹
+    let objDiv = markBooks[objName]['folderDiv'];
+    objDiv[0].style.backgroundColor == ""
+        ?
+        objDiv[0].style.backgroundColor = "#fff"
+        :
+        objDiv[0].style.backgroundColor = ""
+
+    let arrow = objDiv[0].firstElementChild.nextElementSibling;
+    arrow.style.display=='none'?arrow.style.display = 'block' : arrow.style.display = 'none';
+    if(homeState == 'del') 
+    {
+        let delBtn = objDiv[0].lastElementChild;
+        delBtn.style.display == '' ? delBtn.style.display = 'none' : delBtn.style.display = ''; //显示当前文件夹的垃圾桶
+    }
+}
+
+/**
  * 文件夹点击事件
  * 
  */
 function folderClick(obj)
 {
-    let clickFolderName = obj.currentTarget.title;
-    //不再激活原来文件夹 和文件夹内文件
+    let clickFolderName = obj.currentTarget.firstElementChild.textContent;
 
-    if(!!activeFolder)
+    if(activeFolder != clickFolderName)
     {
-        let activeFolderDiv = markBooks[activeFolder]['folderDiv'];
-        activeFolderDiv.css('backgroundColor', "#eee");
-        activeFolderDiv.children().first().next().show();
-        if(deleteing)
+        if(!!activeFolder)
         {
-            activeFolderDiv.children().last().hide();
+            switchFolder(activeFolder);
         }
-        //文件夹内
-        let index = null;
-        let files = markBooks[activeFolder]['files'];
-        for(index in files)
+        switchFolder(clickFolderName);
+        activeFolder = clickFolderName;
+    }
+    else
+    {
+        if(homeState == 'edit')
         {
-            files[index]['fileDiv'].hide();
+            editFolderPage.find("input").prop('value', clickFolderName);
+            switchPage(editFolderPage);
         }
     }
 
-
-    //激活文件夹 和内文件
-    let index = null;
-    let files = markBooks[clickFolderName]['files'];
-    for(index in files)
-    {
-        let fileDiv = files[index]['fileDiv'];
-        fileDiv[0].style.display='flex';
-    }
-    activeFolder = clickFolderName;
-    obj.currentTarget.style.backgroundColor = "#fff";
-    obj.currentTarget.firstElementChild.nextElementSibling.style.display='none';
-    if(deleteing) obj.currentTarget.lastElementChild.style.display='block';
-    return true;
 }
 
 /**
  * 文件点击
  */
 function fileClick(obj)
-{
+{ 
     if(obj.target.localName == 'svg' | obj.target.localName == 'button' |  obj.target.localName == 'path') return;
-
-    window.open (obj.currentTarget.getAttribute('title'),'newwindow'+obj.currentTarget.getAttribute('title'))
+    
+    if(homeState == 'edit')
+    { 
+        let clickFileName = 
+            obj.currentTarget.firstElementChild.
+                nextElementSibling.textContent.trim();
+        let url = obj.currentTarget.getAttribute('title')
+        editFileId = Number
+            (obj.currentTarget.
+                lastElementChild.getAttribute('title'));
+        $("#fileNameInput").prop('value', clickFileName);
+        $("#fileUrlInput").prop('value', url);
+        switchPage(editFilePage);
+    }
+    else
+    {
+        window.open (obj.currentTarget.getAttribute('title'),'newwindow'+obj.currentTarget.getAttribute('title'))
+    }
 }
 
 /**
@@ -649,9 +849,9 @@ function fileClick(obj)
  */
 function addFile()
 {
-    let addUrl = addUrlInput.val();
-    let name = addNameInput.val();
-    let folder = folderNameInput.val();
+    let addUrl = addUrlInput.val().trim();
+    let name = addNameInput.val().trim();
+    let folder = folderNameInput.val().trim();
     if(!addUrl || !name || !folder)
     {
         showInfo("填写错误", "网址 名字 收藏文件 不能为空");
@@ -665,7 +865,10 @@ function addFile()
         folder  = folder.substring(0, 100);
 
     if(addUrl.length > 2000)
-        addUrl  = addUrl.substring(0, 2000);
+    {
+        showInfo("填写错误", "url过长");
+        return;
+    }
 
     if(addUrl.indexOf('http')!= 0)
     {
@@ -714,7 +917,6 @@ function addFileView(folderName, file)
     let thisFileHtml = fileHtml.replace('{{icon}}', host + '/favicon.ico');
     thisFileHtml = thisFileHtml.replaceAll("{{name}}", file['name']);
     thisFileHtml = thisFileHtml.replace("{{i}}", file['i']);
-    thisFileHtml = thisFileHtml.replace('{{folder}}', folderName);
     thisFileHtml = thisFileHtml.replace('{{url}}', file['url']);
     filesDiv.append(thisFileHtml);
     let fileDiv = filesDiv.children().last();
@@ -735,7 +937,7 @@ function addFileView(folderName, file)
  * 解析
  */
 function parseMarkBooks(importMB){
-    let show = false;
+    let record = false;
     let folders = [];
     folders.push('其他');
     let files = [];
@@ -744,25 +946,39 @@ function parseMarkBooks(importMB){
     const parser = new htmlparser.Parser({
         onopentag(name, attributes) {
             tagName = name;
-            if (name === "h3" && ('last_modified' in attributes)) {
-                show = true;
+            if (name === "h3" && ('last_modified' in attributes)) {//文件夹
+                record = true; 
             }
-            else if(name === 'a' && 'href' in attributes)
+            else if(name === 'a' && 'href' in attributes)//文件
             {
                 href = attributes.href;
-                show = true;
+                record = true;
             }
-            else{
-                show = false;
+            else
+            {
+                record = false;
             }
         },
         ontext(text) {
-            if(!show || !text.trim()) return;
-            if(tagName == 'h3') folders.push(text);
-            if(tagName == 'a'){
+            if(!record) return;
+
+            if(tagName == 'h3')//保存当前文件夹名字
+            {
+                if( text.trim() != "")
+                    folders.push(text); //文件夹名不为空
+                else
+                    folders.push('未命名'); //如果是空的就命名为空
+            }
+                
+            if(tagName == 'a')  //保存文件
+            {
+                if(!folders[folders.length - 1])console.log('error')
+                if( text.trim() == "")
+                     text = '未命名'; //如果是空的就命名为空
                 files.push({'name':text, url:href, folder:folders[folders.length - 1]})
                 tagName = "";
             } 
+            record = false;
         },
         onclosetag(tagName){
             if(tagName == 'dl')folders.pop();
@@ -775,7 +991,7 @@ function parseMarkBooks(importMB){
 }
 
 function sync(){
-    //计算特征
+    //计算特征 下载服务器端数据
     var feature = "";
     let keysSorted = Object.keys(markBooks).sort()
     for(let i = 0; i < keysSorted.length; i ++ ){
@@ -804,6 +1020,7 @@ function sync(){
                 markBooks.deleteAll();
                 foldersDiv.html("");
                 filesDiv.html("");
+                activeFolder = null;
                 //新建
                 let files = mapRes['data'];
                 importFiles(files);
@@ -1029,7 +1246,7 @@ window.onresize = function(){
  * @param {Long}  columnNumber  出错代码的列号 
  * @param {Object} errorObj    错误的详细信息，Anything 
  */
- window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,errorObj) { 
+window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,errorObj) { 
         let stack = "";
         if (!!errorObj && !!errorObj.stack){
             //如果浏览器有堆栈信息

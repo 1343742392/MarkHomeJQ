@@ -12,6 +12,7 @@ use app\index\model\MarkBook;
 use app\index\model\Visit;
 use app\Tool;
 use think\Validate;
+use think\Log;
 use app\index\model\Error;
 
 class Index extends Controller
@@ -139,7 +140,71 @@ class Index extends Controller
         ));
     }
 
-    public function LoginOrRegister(Request $request)
+    public function editFile(Request $request)
+    {
+        $validate = Validate::make([
+            'token'  => 'require|max:100',
+            'mail' =>'require|max:100',
+            'id' => 'require|max:100',
+            'name' => 'require|max:100',
+            'url' =>'require|max:2000'
+        ],
+        [
+            "token.require" => "未登录",
+            "mail.require" => "未登录",
+            "id.require" => "没有数据",
+            "name.require" => "没有数据",
+            "url.require" => "没有数据"
+        ]);
+        
+        if (!$validate->check($request->post())) {
+            return json_encode(array("code"=>401,"data"=>$validate->getError()));
+        }
+
+        $token = $request->post('token');
+        $user = User::get(['mail'=> $request->post('mail'),"pw"=>$token]);
+        if(!$user)
+        {
+            return json_encode(array("code"=>401,"data"=>"用户错误"));
+        }
+
+        MarkBook::where(['i'=> $request->post('id')])
+        ->update(['name'=> $request->post('name'), 'url'=>$request->post('url')]);
+        return json_encode(array("code"=>200));
+    }
+
+    public function editFolder(Request $request)
+    {
+        $validate = Validate::make([
+            'token'  => 'require|max:100',
+            'mail' =>'require|max:100',
+            'fromName' => 'require|max:100',
+            'toName' => 'require|max:100'
+        ],
+        [
+            "token.require" => "未登录",
+            "mail.require" => "未登录",
+            "fromName.require" => "没有数据",
+            "toName.require" => "没有数据"
+        ]);
+        
+        if (!$validate->check($request->post())) {
+            return json_encode(array("code"=>401,"data"=>$validate->getError()));
+        }
+
+        $token = $request->post('token');
+        $user = User::get(['mail'=> $request->post('mail'),"pw"=>$token]);
+        if(!$user)
+        {
+            return json_encode(array("code"=>401,"data"=>"用户错误"));
+        }
+
+        MarkBook::where(['user' => $request->post('mail'), 'folder'=> $request->post('fromName')])
+        ->update(['folder'=> $request->post('toName')]);
+        return json_encode(array("code"=>200));
+    }
+
+    public function loginOrRegister(Request $request)
     {
         $userEmail = $request->post('mail');
         if(!$userEmail)
@@ -276,7 +341,7 @@ class Index extends Controller
             $mail->SMTPSecure = 'ssl';                    // 允许 TLS 或者ssl协议
             $mail->Port = 465;                            // 服务器端口 25 或者465 具体要看邮箱服务器支持
 
-            $mail->setFrom('', '');  //发件人
+            $mail->setFrom('', 'MarkBook');  //发件人
             $mail->addAddress($userEmail, '');  // 收件人
             $mail->addReplyTo('', 'info'); //回复的时候回复给哪个邮箱 建议和发件人一致
 
