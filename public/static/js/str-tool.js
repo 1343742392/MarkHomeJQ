@@ -1,6 +1,6 @@
 function strSize(str, charset) {
     let total = 0;
-    charset = charset?.toLowerCase() || '';
+    charset = charset.toLowerCase() ;
     for (i = 0; i < str.length; i++) {
         let charCode = str.charCodeAt(i);
         if (charset === 'utf-16' || charset === 'utf16') {

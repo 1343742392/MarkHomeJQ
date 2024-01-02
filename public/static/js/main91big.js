@@ -177,6 +177,7 @@ let addFileBtn = null;
 let editFolderPage = null;
 let editFilePage = null;
 let editFileId = null;
+let editFolderName = "";
 //对话框
 let dialogDiv = null;
 let dailogTitleH = null;
@@ -340,6 +341,7 @@ function regOrReg()
             userMailP.text(mail); 
             setCookie("token", mapRes["token"], 100);
             userToken = mapRes["token"];
+            userMail = mail;
             switchPage(homePage)
             if("data" in mapRes)
             {
@@ -478,7 +480,7 @@ function setEvent()
 
     //修改文件夹名字
     editFolderPage.find("button").first().click(function(){
-        editFolder(activeFolder, editFolderPage.find('input').prop('value'));
+        editFolder(editFolderName, editFolderPage.find('input').prop('value'));
     });
 
     //修改文件名字
@@ -651,7 +653,8 @@ function editFolder(fromName, toName)
             let resMap = JSON.parse(res.currentTarget.response); 
             if('code' in resMap & resMap['code'] == '200')
             {
-                sync();
+                
+                sync(()=>{editFolderName = toName;});
                 showInfo("修改成功", "修改成功");
             }
             else
@@ -813,6 +816,7 @@ function folderClick(obj)
         {
             editFolderPage.find("input").prop('value', clickFolderName);
             switchPage(editFolderPage);
+            editFolderName = activeFolder;
         }
     }
 
@@ -913,7 +917,7 @@ function addFile()
 function addFileView(folderName, file)
 {
     let url = file['url'];
-    let host = url.replace( url.replace(/(http|https):\/\/(www.)?(\w+(\.)?)+/,""),"");
+    let host = url.replace( url.replace(/(http|https):\/\/(www.)?(\w+(\.)?)+\/?/,""),"");
     let thisFileHtml = fileHtml.replace('{{icon}}', host + '/favicon.ico');
     thisFileHtml = thisFileHtml.replaceAll("{{name}}", file['name']);
     thisFileHtml = thisFileHtml.replace("{{i}}", file['i']);
@@ -990,7 +994,12 @@ function parseMarkBooks(importMB){
     return (files);
 }
 
-function sync(){
+/**
+ * 和服务器对比数据有不同就下载服务器数据
+ * @param {funct(){}} back 同步完成返回
+ * @returns 
+ */
+function sync(back){
     //计算特征 下载服务器端数据
     var feature = "";
     let keysSorted = Object.keys(markBooks).sort()
@@ -1027,6 +1036,7 @@ function sync(){
                 saveMarkBook();
                 console.log('sync');
                 clickFirst();
+                if(!!back)back();
             }
         },
         'post'
@@ -1229,16 +1239,13 @@ $(document).ready(function()
     //调整布局    
     clickFirst();
     setFolderMargin();
-
+    window.onresize = setFolderMargin;
     // addFolder('test');
     // addFile('test',{url:'https://getbootstrap.com/docs/4.6/components/alerts/', name:"tst"});
     //showInfo('test','msg', false);
 
 });
 
-window.onresize = function(){
-    setFolderMargin()
-}
 /** 
  * @param {String} errorMessage  错误信息 
  * @param {String} scriptURI   出错的文件 
