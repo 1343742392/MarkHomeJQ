@@ -234,7 +234,7 @@ class Index extends Controller
             {
                 Cookie::forever("mail", $userEmail);
                 Cookie::forever("token", $user->pw);
-                return json_encode(array("code"=>200));
+                return json_encode(array("code"=>200, "token"=>$user->pw));
             } 
             else 
             {
