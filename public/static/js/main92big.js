@@ -1058,12 +1058,21 @@ function importHtmlMB(data){
     reader.onload = function(evt)
     {
         let text = this.result.replace(/^[^,]*,/, "");
-        let files = parseMarkBooks(utf8decode(window.atob(text)));
+        let utfText = utf8decode(window.atob(text));
+        let files = parseMarkBooks(utfText);
+        if(utfText.length > 2300000)
+        {
+            showInfo('导入结果', "书签太多了,精简到2M以下吧", true);
+            return;
+        }
+        
         if(files.length == 0)
         {
             showInfo('导入结果', "未在该文件发现书签,请选择浏览器导出的HTML文件", true);
             return;
         }
+
+
         let strFiles =  encodeURIComponent(JSON.stringify(files));
         showInfo('正在导入', "正在导入书签需要一会", false);
         request(
