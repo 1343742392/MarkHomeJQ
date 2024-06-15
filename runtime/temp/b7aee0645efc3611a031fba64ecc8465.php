@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:83:"D:\MyFile\Code\Website\MarkHomeJQ\public/../application/index\view\index\index.html";i:1708320327;s:77:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\markbook.html";i:1701771662;s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:83:"D:\MyFile\Code\Website\MarkHomeJQ\public/../application/index\view\index\index.html";i:1718442388;s:77:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\markbook.html";i:1701771662;s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
 <!DOCTYPE html>
 <html lang="zh" style="height:100%">
 <head>
@@ -9,12 +9,13 @@
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <!-- <script src="/static/js/bootstrap.min.js"></script> -->
     <link rel="stylesheet" href="/static/css/app85.css">
+    <script src="/static/js/oldcode.js"></script>
     <script src="/static/js/jquery.js"></script>
     <script src="/static/js/md5.js"></script>
     <!-- <script type="module" src="/static/js/request"></script> -->
     <script type="text/javascript" src="/static/js/htmlparser.js"></script>
 
-    <script type="module" src="/static/js/main92.js"></script>
+    <script type="module" src="/static/js/main94.js"></script>
     <script  type="text/javascript">
   
     </script>
@@ -42,7 +43,7 @@
                 </div>
             </div>
 
-            <div id="loginPage" class="h-100 center-container"  style="display: none;">
+            <div id="loginPage" class="h-100 center-container "  style="display: none;flex-direction: column;">
                 <div class="radius-card w-100 p-4">
                     <h1 class="font-weight-bold m-2">书签主页</h1>
                     <p class="font-bold text-muted small mb-4">摆脱设备浏览器限制 网页式书签</p>
@@ -59,6 +60,10 @@
 
                     <button id="loginOrRegBtn" class="btn btn-primary btn-block">注册或者登录</button>
                 </div>
+		
+		        <a style="margin-top:40px;     font-size: 12px;color:#9a9a9a" href="https://beian.miit.gov.cn/" target="_blank">湘ICP备18014381号</a>
+                
+
             </div>
 
             <div id="homePage" class="home-page" >

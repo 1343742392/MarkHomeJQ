@@ -1,4 +1,6 @@
 /**************mian**************/
+
+
 html{
     height: 100%;
 }
@@ -24,6 +26,13 @@ body{
     padding: 20px;
 }
 
+.home-page{
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    height: 100%;
+}
+
 .radius-card{
     background-color: rgb(246, 246, 246);
     border: 1px solid #ebeef5;
@@ -46,7 +55,9 @@ body{
 }
 
 .main{
-    width:min(90%, 400px) ;
+    width: 90%;
+    max-width: 400px;
+    /* width:min(90%, 400px) ; chrome70不支持*/
     display: flex;
     justify-content:flex-end;
     flex-direction: column;
@@ -77,7 +88,7 @@ body{
 /******************markbook*************/
 .mark-book{
     margin-bottom: 20px;
-    height: 470px;
+    height: 60%;
     background-color: #eee;
     background-color:#eee
 }
@@ -117,7 +128,16 @@ body{
 
 .mb-left{
     width: 25%;
+
+    overflow-x: hidden;
+    height: 100%;
+
+    overflow-y: scroll;
+}
+
+.folders{
     display: flex;
+    justify-content: flex-end;
     justify-self: end;
     flex-direction: column;
 }
@@ -158,19 +178,19 @@ body{
     flex-direction: column;
     justify-content: flex-end;
     /* height: 1500px; */
-    margin-top: 100px;
+    /* margin-top: 100px; */
 }
 
 .file-row{
-    display: none;
+    display: flex;
     width: 100%;
     height: 40px;
 }
 
 .file-right{
     display: flex;
-    width: 62%;
-    margin-right: 6%;
+    width: 55%;
+    margin-right: 4%;
     justify-items: start;
 }
 
@@ -186,6 +206,11 @@ body{
     padding-left: 20px;
     display: flex;
     justify-items: start;
+}
+
+.file-ico{
+    width: 20px;
+    height: 20px;
 }
 
 .file-name{

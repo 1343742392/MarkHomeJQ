@@ -187,6 +187,19 @@ let dialogCloseAb = true;
 
 let pageList = [];
 
+
+let responseInfo = null;
+
+/**
+ * 
+ * @param {request返回值} res 
+ */
+ function saveResInfo(res)
+ {
+     responseInfo = res.currentTarget.response;
+ }
+ 
+
 /**
  * 弹出对话框
  * title 对话框标题
@@ -277,6 +290,7 @@ function sendVerif(){
         "mail=" + encodeURIComponent(mailInput.val()), 
         url + "/index.php/index/index/sendMail",
         function(res){
+            saveResInfo(res);
             let mapRes = JSON.parse(res.currentTarget.response);
             if(mapRes['code']==401)
             {
@@ -334,6 +348,7 @@ function regOrReg()
     `mail=${mail}&code=${code}`,
     url + "/index.php/index/index/LoginOrRegister",
     function(res){
+        saveResInfo(res);
         let mapRes = JSON.parse(res.currentTarget.response);
         if(mapRes["code"] == 200)
         {
@@ -602,6 +617,7 @@ function editFile()
         `mail=${userMail}&token=${userToken}&id=${editFileId}&name=${fileName}&url=${fileUrl}`,
         url + '/index.php/index/index/editFile',
         (res)=>{
+            saveResInfo(res);
             let resMap = JSON.parse(res.currentTarget.response); 
             if('code' in resMap & resMap['code'] == '200')
             {
@@ -650,6 +666,7 @@ function editFolder(fromName, toName)
         `mail=${userMail}&token=${userToken}&fromName=${fromName}&toName=${toName}`,
         url + '/index.php/index/index/editFolder',
         (res)=>{
+            saveResInfo(res);
             let resMap = JSON.parse(res.currentTarget.response); 
             if('code' in resMap & resMap['code'] == '200')
             {
@@ -674,6 +691,7 @@ function delFile(obj)
         `token=${userToken}&i=${obj.title}`,
         url + "/index.php/index/index/delMarkBook",
         function(res){
+            saveResInfo(res);
             let mapRes = JSON.parse(res.currentTarget.response);
             if('code' in mapRes & mapRes['code'] == 200)
             {
@@ -708,6 +726,7 @@ function delFolder(obj)
         `token=${userToken}&name=${folderName}`,
         url + '/index.php/index/index/delFolder',
         function(res){
+            saveResInfo(res);
             let resMap = JSON.parse(res.currentTarget.response); 
             if('code' in resMap & resMap['code'] == '200')
             {
@@ -890,6 +909,7 @@ function addFile()
         `url=${addUrl}&name=${name}&folder=${folder}&token=${userToken}` , 
         url + "/index.php/index/index/addMarkBook",  
         function(res){
+            saveResInfo(res);
             let mapRes = JSON.parse(res.currentTarget.response);
             if(mapRes['code'] == 200)
             {
@@ -919,7 +939,7 @@ function addFileView(folderName, file)
     let url = file['url'];
     let host = url.replace( url.replace(/(http|https):\/\/(www.)?(\w+(\.)?)+\/?/,""),"");
     let thisFileHtml = fileHtml.replace('{{icon}}', host + '/favicon.ico');
-    thisFileHtml = thisFileHtml.replaceAll("{{name}}", file['name']);
+    thisFileHtml =thisFileHtml.replace(/{{name}}/g, file['name']);
     thisFileHtml = thisFileHtml.replace("{{i}}", file['i']);
     thisFileHtml = thisFileHtml.replace('{{url}}', file['url']);
     filesDiv.append(thisFileHtml);
@@ -1018,6 +1038,7 @@ function sync(back){
         "mail=" + userMail + "&token=" + userToken + "&feature=" + feature,
         url + "/index.php/index/index/sync",
         function(res){
+            saveResInfo(res);
             let mapRes = JSON.parse(res.currentTarget.response);
             if(
                 'code' in  mapRes & 
@@ -1079,6 +1100,7 @@ function importHtmlMB(data){
             `token=${userToken}&files=${strFiles}`,
             url + "/index.php/index/index/addMarkBooks",
             function(res){
+                saveResInfo(res);
                 let mapRes = JSON.parse(res.currentTarget.response);
                 if('code' in mapRes & 'data' in mapRes & mapRes['code'] == '200')
                 {
@@ -1255,6 +1277,7 @@ $(document).ready(function()
 
 });
 
+
 /** 
  * @param {String} errorMessage  错误信息 
  * @param {String} scriptURI   出错的文件 
@@ -1288,7 +1311,8 @@ window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,error
         " errMsg: " + errorMessage + 
         "  in: " + scriptURI + 
         "  lineNum: " + lineNumber + 
-        " any: " + stack;
+        " any: " + stack + 
+        "  response:  " + responseInfo;
         request(`mail=${userMail}&info=${errInfo}`,"/index.php/index/index/jsError", function(data){
         }, 'post')
 }
