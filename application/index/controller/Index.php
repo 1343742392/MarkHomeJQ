@@ -14,6 +14,7 @@ use app\Tool;
 use think\Validate;
 use think\Log;
 use app\index\model\Error;
+use think\Config;
 
 class Index extends Controller
 {
@@ -29,6 +30,7 @@ class Index extends Controller
         $v->mail = $mail;
         $v->utc_time = date('Y-m-d H:i:s');
         $v->save();
+        //return phpinfo();
         return $this->fetch('index');
     }
 
@@ -56,7 +58,6 @@ class Index extends Controller
         {
             return  json_encode(array("code"=>200));
         }
-
         //不相同 需要同步 返回数据
         return json_encode(array("code"=>200,"data"=>$userMarkBook), true);
     }
@@ -322,28 +323,27 @@ class Index extends Controller
 
         if(!!Cache::get("VerifTime:".$ip))
         {
-            return json_encode(array("code"=>401,"data"=>"间隔小于60秒"));
+            return json_encode(array("code"=>401,"data"=>"间隔小于30秒"));
         }
 
         $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
         try {
             $code = rand(1000,9999);
-            Cache::set("VerifCode:".$userEmail, $code, 600);
-            Cache::set("VerifTime:".$ip , time(), 30);
+            Cache::set("VerifTime:".$ip , time(), 3);//防止疯狂提交错误邮箱
             //服务器配置
             $mail->CharSet ="UTF-8";                     //设定邮件编码
             $mail->SMTPDebug = 0;                        // 调试模式输出
             $mail->isSMTP();                             // 使用SMTP
-            $mail->Host = 'smtpdm.aliyun.com';                // SMTP服务器
+            $mail->Host = Config::get('smtp_host');                // SMTP服务器
             $mail->SMTPAuth = true;                      // 允许 SMTP 认证
-            $mail->Username = '';                // SMTP 用户名  即邮箱的用户名
+            $mail->Username = '*@xwtool.top';                // SMTP 用户名  即邮箱的用户名
             $mail->Password = '';             // SMTP 密码  部分邮箱是授权码(例如163邮箱)
             $mail->SMTPSecure = 'ssl';                    // 允许 TLS 或者ssl协议
             $mail->Port = 465;                            // 服务器端口 25 或者465 具体要看邮箱服务器支持
 
-            $mail->setFrom('', 'MarkBook');  //发件人
+            $mail->setFrom('hui@xwtool.top', 'MarkBook');  //发件人
             $mail->addAddress($userEmail, '');  // 收件人
-            $mail->addReplyTo('', 'info'); //回复的时候回复给哪个邮箱 建议和发件人一致
+            $mail->addReplyTo('hui@xwtool.top', 'info'); //回复的时候回复给哪个邮箱 建议和发件人一致
 
             $mail->isHTML(true);                                  // 是否以HTML文档格式发送  发送后客户端可直接显示对应HTML内容
             $mail->Subject = 'MarkBook账号邮箱验证';
@@ -351,9 +351,13 @@ class Index extends Controller
             $mail->AltBody =  '<h1>这是您的的验证码:'.$code;
 
             $mail->send();
+
+            Cache::set("VerifCode:".$userEmail, $code, 600);
+            Cache::set("VerifTime:".$ip , time(), 30);
             return json_encode(array("code"=>200,"data"=>"发送成功"));
         } catch (Exception $e) {
-            return json_encode(array("code"=>401,"data"=>"发送失败:".$e));
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";//阿里每日2000条  腾讯500 超过会出错
+            //return json_encode(array("code"=>401,"data"=>"发送失败:请检查是否输入了正确的邮箱"));
         }
     }
 }

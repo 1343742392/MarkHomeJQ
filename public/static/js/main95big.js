@@ -294,7 +294,7 @@ function sendVerif(){
             let mapRes = JSON.parse(res.currentTarget.response);
             if(mapRes['code']==401)
             {
-                showInfo("发送验证码失败", '网络问题或者服务器故障');
+                showInfo("发送验证码失败", mapRes['data']);
                 return;
             }
             if(mapRes['code']==200)
@@ -718,10 +718,14 @@ function delFile(obj)
 
 /**
  * 删除文件夹
+ * 
  */
 function delFolder(obj) 
 {
     let folderName = obj.currentTarget.parentNode.firstElementChild.textContent;
+    if(!(folderName in markBooks))//如果同时多次触发这个函数好像markBooks[folderName]['files'];会出错
+        return;
+
     request(
         `token=${userToken}&name=${folderName}`,
         url + '/index.php/index/index/delFolder',

@@ -28,7 +28,10 @@ return [
         ]
     ]), 
     // 应用调试模式
-    'app_debug'              => true,
+    'app_debug'              => false,
+
+    //邮箱服务                    'smtpdm.aliyun.com' or 'smtp.qcloudmail.com'
+    'smtp_host'            => 'smtp.qcloudmail.com',
 
     //get_url调试
     'get_url_debug'          => false,
