@@ -1,6 +1,6 @@
 import { request } from './request.js';
 import {setCookie, getCookie, clearCookie} from './cookie-tool.js';
-import {utf8decode} from './utf8.js';
+import {binaryToUtf8} from './utf8-1.js';
 let url = "";
 
 /**
@@ -19,7 +19,7 @@ let url = "";
         //         }
         //       ]
         //     },
-        //   tes2t:{ active:false,
+//   tes2t:{ active:false,
  }
  */
 let markBooks = {
@@ -1083,7 +1083,7 @@ function importHtmlMB(data){
     reader.onload = function(evt)
     {
         let text = this.result.replace(/^[^,]*,/, "");
-        let utfText = utf8decode(window.atob(text));
+        let utfText = binaryToUtf8(window.atob(text));
         let files = parseMarkBooks(utfText);
         if(utfText.length > 2300000)
         {

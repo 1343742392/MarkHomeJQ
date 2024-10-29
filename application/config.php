@@ -30,7 +30,7 @@ return [
     // 应用调试模式
     'app_debug'              => false,
 
-    //邮箱服务                    'smtpdm.aliyun.com' or 'smtp.qcloudmail.com'
+    //邮箱服务                    'smtpdm.aliyun.com' or 'smtp.qcloudmail.com' 切换时要修改dns解析
     'smtp_host'            => 'smtp.qcloudmail.com',
 
     //get_url调试

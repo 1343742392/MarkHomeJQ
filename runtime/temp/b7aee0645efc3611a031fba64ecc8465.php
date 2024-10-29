@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:83:"D:\MyFile\Code\Website\MarkHomeJQ\public/../application/index\view\index\index.html";i:1719063793;s:77:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\markbook.html";i:1701771662;s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:83:"D:\MyFile\Code\Website\MarkHomeJQ\public/../application/index\view\index\index.html";i:1727947197;s:77:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\markbook.html";i:1730204074;s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
 <!DOCTYPE html>
 <html lang="zh" style="height:100%">
 <head>
@@ -15,7 +15,7 @@
     <!-- <script type="module" src="/static/js/request"></script> -->
     <script type="text/javascript" src="/static/js/htmlparser.js"></script>
 
-    <script type="module" src="/static/js/main95.js"></script>
+    <script type="module" src="/static/js/main96.js"></script>
     <script  type="text/javascript">
   
     </script>
@@ -77,7 +77,7 @@
 
                 <div class="mark-book radius-card d-flex align-items-end">
     <div id="mb-left" class="mb-left hide-rollbar">
-        <div id="foldersDiv" class='folders align-items-center' >
+        <div id="foldersDiv" class='w-100 folders align-items-center' >
             
         </div>
     </div>
