@@ -7,10 +7,12 @@ let url = "";
  * markBooks{
  * forEachFile:func
  * forEachFolder:func
- * test:{ 
+ * "文件夹名":{ 
  *          folderDiv: [0]原生元素, 
-        //     files:[
-        //       {
+ *          itemDiv: [0]原生元素, 
+        //  files:
+                [
+        //         {
                     fileDiv:[0]原生元素,
                     name:"CSDN",
                     url:"https://auto/zh",
@@ -18,8 +20,12 @@ let url = "";
                     i:999
         //         }
         //       ]
-        //     },
-//   tes2t:{ active:false,
+        //  folders:
+            {
+                ...
+            }
+        //  },
+//   "文件夹名2":{ active:false,
  }
  */
 let markBooks = {
@@ -38,41 +44,210 @@ let markBooks = {
             }
         })
     },
-    forEachFolder:function(back)
+    forEachFolder:function(back, obj = markBooks)
     {
         let res = 0;
         let keys = Object.keys(markBooks)
         for(let i = 0; i < keys.length; i ++)
         {
-            res = back(markBooks[keys[i]]);
-            if(!!res) return 1;
+            res = back(markBooks[keys[i]]);//回调
+            if(!!res) return 1;//是否结束遍历
+
+            if(!!obj['folders'])
+            {
+                return this.forEachFolder(back, obj['folders']);
+            }
         }
     },
-    deleteAll:function(){
+    //getFile:function()
+    /**
+     * 
+     * @param {字符数组} path  (例如['收藏夹', '视频'])
+     * @returns  返回 
+     *                  视频:{folderdiv:[], itemdiv:[], files:[], folders:{}}  
+     *                  音频:{folderdiv:[], itemdiv:[], files:[], folders:{}}
+     *                                   。。。同一级的
+     *              如果找到收藏夹返回整个收藏夹  如果找不到返回null
+     * 
+     *          或许可以改为 视频:{'视频', folderdiv:[], itemdiv:[], files:[], folders:{}}  这种结构
+     */
+    getFolder:function(path)
+    {
+        //路径必须是数组 和不能为空
+        if (typeof markBooks === 'undefined' ||!Array.isArray(path) || path.length == 0) {
+            return null;
+        }
+        // 开始时设置为最外层对象
+        let obj = markBooks;  
+        if(!('folders' in obj))return null;
+
+        for (let i = 0; ; i++) 
+        {
+            if (! (path[i] in obj.folders)) 
+            {
+                // 如果中间某一步找不到，返回空
+                return null;
+            }
+
+            if(i >= path.length - 1 && path[i] in obj.folders)
+            {
+                // 结束
+                return obj.folders;
+            }
+            else
+            {
+                // 按照路径逐步深入
+                obj = obj.folders[path[i]];  
+            }
+        }
+        return obj;
+    },
+    /**
+     * 
+     * @param {数组类型} path  (例如['收藏夹', '视频'])
+     * @param {对象} obj (例如 
+     * {
+            fileDiv:[0]原生元素,
+            name:"CSDN",
+            url:"https://auto/zh",
+            name: "Sina Visitor System"
+            i:999
+        })
+     * 可能会出现的错
+     *      确保 path 是一个数组。
+            确保 path 数组中的每个元素都是字符串。
+            确保 obj 是一个正常对象。
+     */
+    setFolder:function(path, folder)
+    {
+        if (typeof markBooks === 'undefined') {
+            throw new Error('markBooks is not defined');
+        }
+
+        // 开始时设置为最外层对象
+        let obj = markBooks;  
+        for (let i = 0;; i++) 
+        {
+            if (! (path[i] in obj)) 
+            {
+                // 如果中间某一步找不到，则创建路径
+                obj[path[i]] = {};
+            }
+
+            if(i + 1 == path.length)
+            {
+                //设置 结束
+                Object.assign(obj,folder);  
+                return;
+            }
+            else
+            {
+                // 按照路径逐步深入
+                obj = obj[path[i]];  
+            }
+        }
+    },
+    deleteAll:function()
+    {
         let mbkes = Object.keys(markBooks);
         for(let i = 0; i < mbkes.length; i ++)
         {
             delete markBooks[mbkes[i]];
         }
+    },
+    /**
+     * 创建路径
+     * @param {字符组} path (例如['收藏夹', '视频'])
+     * @param {对象} leftDiv jquery的元素
+     *  @param {对象数组} itemDivs jquery的元素
+     * 
+     * return {对象}   folder:{folderDiv:[], itemDiv:[], files:[], folders:{}}
+     */
+    createPath:function(path, leftDiv, itemDivs)
+    {
+        if (typeof markBooks === 'undefined') {
+            throw new Error('markBooks is not defined');
+        }
+        // 开始时设置为最外层对象
+        let obj = markBooks;  
+        for (let i = 0;; i++) 
+        {
+            if(!('folders' in obj))
+            {
+                obj['folders'] = {};
+            }
+
+            if (! (path[i] in obj.folders)) 
+            {
+                // 如果中间某一步找不到，创建
+                let folder = markBooks.newFolder(path[i]);
+                //已经保存了的的不会重复保存
+                if(leftDiv != null && i == 0) folder[path[i]]['folderDiv'] = leftDiv;
+                if(itemDivs!= null) folder[path[i]]['itemDiv'] = itemDivs[i];
+                //防止没有空的folders
+                if(!('folders' in obj))
+                    obj['folders'] = {};
+                //保存
+                obj['folders'][path[i]] = folder[path[i]];
+            }
+
+            if(i + 1 == path.length)
+            {
+                // 结束
+                let res = {};
+                res[path[i]] = obj['folders'][path[i]];
+                return res;
+            }
+            else
+            {
+                // 按照路径逐步深入
+                obj = obj['folders'][path[i]];  
+            }
+        }
+        return obj;
+    },
+    /**
+     * 创建一个新的空folder
+     * @param {字符} name 
+     * @returns 
+     */
+    newFolder:function(name) 
+    {
+        let folder = {};//没有的话 创建文件夹
+        let files = [];
+        let folders = {};
+        folder[name] = {};
+        folder[name]['files'] = files;
+        folder[name]['folders'] = folders;
+        folder[name]['folderDiv'] = null;
+        return folder;
     }
 };
-Object.defineProperty(markBooks, 'forEachFile', {
-    writable: false, //是否可以修改 默认是true
-    enumerable: false, //是否可被for in遍历 仅仅只能控制 for in 无法控制访问
-})
-Object.defineProperty(markBooks, 'forEachFolder', {
-    writable: false, //是否可以修改 默认是true
-    enumerable: false, //是否可被for in遍历 仅仅只能控制 for in 无法控制访问
-})
-Object.defineProperty(markBooks, 'deleteAll', {
-    writable: false, //是否可以修改 默认是true
-    enumerable: false, //是否可被for in遍历 仅仅只能控制 for in 无法控制访问
-})
+
+//   writable: false, //是否可以修改 默认是true
+//   enumerable: false, //是否可被for in遍历 仅仅只能控制 for in 无法控制访问
+const properties = [
+    { key: 'forEachFile', writable: false, enumerable: false},
+    { key: 'forEachFolder', writable: false, enumerable: false},
+    { key: 'deleteAll', writable: false, enumerable: false},
+    { key: 'createPath', writable: false, enumerable: false},
+    { key: 'newFolder', writable: false, enumerable: false},
+    { key: 'setFolder', writable: false, enumerable: false},
+    { key: 'getFolder', writable: false, enumerable: false}
+];
+
+properties.forEach(property => {
+    Object.defineProperty(markBooks, property.key, {
+        writable: property.writable,
+        enumerable: property.enumerable,
+    });
+});
 
 
 let mbLeft = null;
 let foldersDiv = null;
-let activeFolder = null;
+let backfoloderDiv = null;
+let activePath = [];
 /**
  * homeState = {'ide', 'del', 'edit', 'editing'}
  */
@@ -102,7 +277,7 @@ let folderHtml =
     </button>
 </div>
 `
-let filesDiv = null;
+let contentDiv = null;
 let fileHtml = 
 `
 <div  class="
@@ -110,12 +285,12 @@ file-row
 click-pointer 
 flex-md-row 
 align-items-center " title='{{url}}' >
-    <div class="file-left">
+    <div class="item-left">
         <img class='file-ico' src='{{icon}}' onerror="src='/static/icons/defIcon.png'"
         >
     </div>
 
-    <div class="file-right">
+    <div class="item-right">
         <p class="file-name one-line">{{name}}</p>
     </div>
 
@@ -126,6 +301,43 @@ align-items-center " title='{{url}}' >
     </button>
 </div>
 `
+let contentFolderHtml=
+`
+<div  class="
+file-row 
+click-pointer 
+flex-md-row 
+align-items-center ">
+    <div class="item-left">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder" viewBox="0 0 16 16">
+            <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z"/>
+        </svg>
+    </div>
+
+    <div class="item-right">
+        <p class="file-name one-line">{{name}}</p>
+    </div>
+</div>
+`
+let backFoloderHtml = 
+`
+<div  class="
+file-row 
+click-pointer 
+flex-md-row 
+align-items-center ">
+    <div class="item-left">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"/> 
+        </svg>
+    </div>
+
+    <div class="item-right">
+        <p class="file-name one-line">返回</p>
+    </div>
+</div>
+`
+
 let mBsHtml = 
 `
 <!DOCTYPE NETSCAPE-Bookmark-file-1>
@@ -165,7 +377,7 @@ let userToken = null;
 //添加页
 let addUrlInput = null;
 let addNameInput = null;
-let folderNameInput = null;
+let pathInput = null;
 let folderSelectDiv = null;
 let folderSelectHtml = 
 `
@@ -252,7 +464,7 @@ function back()
         $('#homeBackBtn').hide();
 
         //隐藏当前文件夹删除按钮
-        if(!!activeFolder) markBooks[activeFolder]['folderDiv'].children().last().hide();
+        if(!!activePath) markBooks[activePath]['folderDiv'].children().last().hide();
         markBooks.forEachFile((file)=>{
             file.fileDiv.children().last().hide();
         })
@@ -403,11 +615,11 @@ function findE()
 
     mbLeft = $("#mb-left");
     foldersDiv = $('#foldersDiv');
-    filesDiv = $('#filesDiv');
+    contentDiv = $('#contentDiv');
 
     addUrlInput = $("#addUrlInput");
     addNameInput = $("#addNameInput");
-    folderNameInput = $("#folderNameInput");
+    pathInput = $("#folderNameInput");
     folderSelectDiv = $("#folderSelectDiv");
     addFileBtn = $('#addFileBtn');
     searchBtn = $('#searchBtn');
@@ -433,7 +645,9 @@ function setEvent()
     window.back = back;
 
     window.delFile = delFile; 
-    
+    //添加页下拉
+    $('#dropdown').click(dropdown);
+
     //添加事件
     addFileBtn.click(function()
     {
@@ -461,18 +675,11 @@ function setEvent()
     //退出登录
     $("#loginOutBtn").click(function(){
         //清空cookie 直接刷新bug少
-        // pageList=[];
-        // userPage.hide();
-        // loginPage.show();
-        // foldersDiv.html("");
-        // filesDiv.html("");
-        // markBooks.deleteAll();
         clearCookie('mail');
         clearCookie("token");
         window.localStorage.removeItem("mark_books");
 
         location.reload();
-        // activeFolder = '';
     })
 
     //打开添加页书签
@@ -512,8 +719,11 @@ function setEvent()
             file.fileDiv.children().last().show();
         })
         //显示当前文件夹删除按钮
-        if(!!activeFolder)
-            markBooks[activeFolder]['folderDiv'].children().last().show();
+        if(!!activePath)
+        {
+            let folder = markBooks.getFolder(activePath)
+            folder.folderDiv.children().last().show();
+        }
 
         switchPage(homePage);
         $('#homeHeadDiv').hide();
@@ -553,18 +763,18 @@ function setEvent()
 保存书签
 */
 function saveMarkBook(){
-    window.localStorage.mark_books = encodeURIComponent( JSON.stringify(markBooks, function(k, v){
-        if(
-            k == 'folderDiv' | 
-            k == 'fileDiv' |
-            k == 'ico' |
-            k == 'create_time' |
-            k == 'user'|
-            k == 'update_time' )
-                return undefined
-        else
-                return v;
-    }));
+    // window.localStorage.mark_books = encodeURIComponent( JSON.stringify(markBooks, function(k, v){
+    //     if(
+    //         k == 'folderDiv' | 
+    //         k == 'fileDiv' |
+    //         k == 'ico' |
+    //         k == 'create_time' |
+    //         k == 'user'|
+    //         k == 'update_time' )
+    //             return undefined
+    //     else
+    //             return v;
+    // }));
 }
 
 /**
@@ -648,19 +858,6 @@ function editFolder(fromName, toName)
         showInfo("填写错误", "文件名字太长了");
         return;
     }
-    //本地修改
-    // markBooks[fromName]['folderDiv'].find('p').text(toName);
-
-    // let folderDiv = markBooks[fromName]['folderDiv'];
-    // let files = markBooks[fromName]['files'];
-    // delete  markBooks[fromName]
-    // markBooks[toName] = {};
-    // markBooks[toName]['folderDiv'] = folderDiv;
-    // markBooks[toName]['files'] = files;
-
-    // activeFolder = toName;
-
-    // saveMarkBook();
     //云修改
     request(
         `mail=${userMail}&token=${userToken}&fromName=${fromName}&toName=${toName}`,
@@ -741,7 +938,7 @@ function delFolder(obj)
                     files[index].fileDiv.remove();
                 }
                 delete markBooks[folderName];
-                activeFolder = null;
+                activePath = [];
                 clickFirst();
                 setFolderMargin()
                 saveMarkBook();
@@ -751,11 +948,40 @@ function delFolder(obj)
         )
 }
 
+
 /**
- * 添加文件夹
- * name string
+ * 添加文件夹视图
+ * 返回创建的文件夹div
  */
-function addFolder(name = '其他')
+function addFolderView(parentFolderPath, folderName)
+{
+    let itemFolderHtml = contentFolderHtml.replace(/\{\{name\}\}/g, folderName);
+    let itemFolder = $(itemFolderHtml);
+    let folder = markBooks.getFolder(parentFolderPath);
+    if(folder !== null)
+    {
+        let files = folder[parentFolderPath[parentFolderPath.length - 1]]['files'];
+        if(files.length > 0)
+        {
+            let firstFile = files[0];
+            let fileDiv = firstFile['fileDiv'];
+            if(!!fileDiv)
+            {
+                fileDiv.before(itemFolder);
+                return itemFolder;
+            }
+        }
+    }
+    contentDiv.append(itemFolder);
+    return itemFolder;
+}
+
+/**
+ * 
+ * @param {路径数组} path [..., '父文件夹', '文件夹']
+ * @returns  folder:{name, files, folders, folderDiv, itemDiv}
+ */
+function addFolderLocal(path = ['其他'])
 {
     //名字长度显示限制
     // let width = 0;
@@ -777,38 +1003,123 @@ function addFolder(name = '其他')
 
     //let thisFolderHtml = folderHtml.replace(/\{\{fullName\}\}/g, name);
 
-    foldersDiv.append(folderHtml.replace('{{name}}', name));
+    let name = null;
 
-    let folderDiv = foldersDiv.children().last();
-    markBooks[name] = {folderDiv: folderDiv, files:[]};
-    folderDiv.click(folderClick);
-    folderDiv.children().last().click(delFolder);
+    let itemDivs = [];
+    let localPath = [];
+    let folderDiv = null;
+    for(let i = 0; i < path.length; i ++)
+    {
+        name = path[i];
+        let itemFolderDiv = null;
+        let beforePath = JSON.parse(JSON.stringify(localPath));
+        localPath.push(name);
+        //判断当前路径是否已经存在
+        if(markBooks.getFolder(localPath) == null) 
+        {
+            //插入左侧ui
+            if(i == 0)
+            {
+                foldersDiv.append(folderHtml.replace('{{name}}', name));
+                folderDiv = foldersDiv.children().last();
+                //添加点击事件
+                folderDiv.on('click', {'path':  JSON.stringify(localPath)}, folderClick);
+                folderDiv.children().last().click(delFolder);
+            }
+            //插入右侧文件夹的ui
+            itemFolderDiv = addFolderView(beforePath, name);
+            //添加点击事件
+            itemFolderDiv.on('click', {'path':  JSON.stringify(localPath)}, folderClick);
+            //是否隐藏
+            let strActivePath = JSON.stringify(activePath);
+            if(strActivePath == '[]' | JSON.stringify(beforePath) != strActivePath)
+            {
+                itemFolderDiv.hide();
+            }
+        }
+        itemDivs.push(itemFolderDiv);
+    }
+
+    //创建路径和保存div
+    let  folder = markBooks.createPath(path, folderDiv, itemDivs);
     setFolderMargin();
+    return folder;
 }
 
 /**
  * 打开和关闭文件夹 ui处理
+ * 
+ * @param {字符数组} path [..., '父文件夹', '文件夹']
  */
-function switchFolder(objName)
+function toggleFolder(path)
 {
     //处理文件
     let index = null;
-    let files = markBooks[objName]['files'];
-    for(index in files)
+    let folderName = path[path.length - 1]
+    let folder = markBooks.getFolder(path);
+
+    let files = folder[folderName]['files'];
+    if(!!files)
     {
-        files[index]['fileDiv'].toggle();
+        for(index in files)
+        {
+            let file = files[index];
+            if(!!file['fileDiv'])
+            {
+                //存在元素就删除
+                file['fileDiv'].remove();
+                file['fileDiv'] = null;
+            }
+            else
+            {
+                //不存在就创建
+                addFileView(file)
+            }
+        }
     }
 
-    //处理文件夹
-    let objDiv = markBooks[objName]['folderDiv'];
-    objDiv[0].style.backgroundColor == ""
+    //处理返回上个文件夹按钮
+    if(!!backfoloderDiv)
+    {
+        backfoloderDiv.remove();
+        backfoloderDiv = null;
+    }
+    if(path.length > 1)
+    {
+        contentDiv.append(backFoloderHtml);
+        backfoloderDiv = contentDiv.children().last();
+        backfoloderDiv.click(function(){
+            //获取上个文件夹div
+            let lastFolder = markBooks.getFolder(path.slice(0, -1));
+            let lastFolderDiv = lastFolder[path[path.length - 2]]['itemDiv'];
+            lastFolderDiv.click();
+        });
+    }
+
+    //处理文件夹内的文件夹
+    let folders = folder[folderName]['folders'];
+    for(let subFolderName in folders)
+    {
+        let subFolder = folders[subFolderName];
+        subFolder.itemDiv.toggle();
+    }
+
+
+
+    //处理左侧快捷文件夹
+    let objDiv = folder[folderName]['folderDiv'];
+    if(!!objDiv)
+    {
+        objDiv[0].style.backgroundColor == ""
         ?
         objDiv[0].style.backgroundColor = "#fff"
         :
         objDiv[0].style.backgroundColor = ""
 
-    let arrow = objDiv[0].firstElementChild.nextElementSibling;
-    arrow.style.display=='none'?arrow.style.display = 'block' : arrow.style.display = 'none';
+        let arrow = objDiv[0].firstElementChild.nextElementSibling;
+        arrow.style.display=='none'?arrow.style.display = 'block' : arrow.style.display = 'none';
+    }
+
     if(homeState == 'del') 
     {
         let delBtn = objDiv[0].lastElementChild;
@@ -822,24 +1133,26 @@ function switchFolder(objName)
  */
 function folderClick(obj)
 {
-    let clickFolderName = obj.currentTarget.firstElementChild.textContent;
-
-    if(activeFolder != clickFolderName)
+    let sClicikFolderPath = obj.data['path'];
+    let clickFolderPath = JSON.parse(sClicikFolderPath);
+    let path = JSON.parse(obj['data']['path']);
+    let strActivePath = JSON.stringify(activePath);
+    if(strActivePath!= sClicikFolderPath)
     {
-        if(!!activeFolder)
+        if(activePath.length != 0)
         {
-            switchFolder(activeFolder);
+            toggleFolder(activePath);
         }
-        switchFolder(clickFolderName);
-        activeFolder = clickFolderName;
+        toggleFolder(clickFolderPath);
+        activePath = path;
     }
     else
     {
         if(homeState == 'edit')
         {
-            editFolderPage.find("input").prop('value', clickFolderName);
+            editFolderPage.find("input").prop('value', sClicikFolderPath);
             switchPage(editFolderPage);
-            editFolderName = activeFolder;
+            editFolderName = strActivePath;
         }
     }
 
@@ -878,8 +1191,8 @@ function addFile()
 {
     let addUrl = addUrlInput.val().trim();
     let name = addNameInput.val().trim();
-    let folder = folderNameInput.val().trim();
-    if(!addUrl || !name || !folder)
+    let path = pathInput.val().trim();
+    if(!addUrl || !name || !path)
     {
         showInfo("填写错误", "网址 名字 收藏文件 不能为空");
         return;
@@ -888,8 +1201,8 @@ function addFile()
     if(name.length > 100)
         name = name.substring(0, 100);
 
-    if(folder.length > 100)
-        folder  = folder.substring(0, 100);
+    if(path.length > 100)
+        path  = path.substring(0, 100);
 
     if(addUrl.length > 2000)
     {
@@ -908,57 +1221,79 @@ function addFile()
         return;
     }
 
+    //字符路径转数组字符
+    let arrpath = path.split(">");
+    let spath = JSON.stringify(arrpath);
 
     request(
-        `url=${addUrl}&name=${name}&folder=${folder}&token=${userToken}` , 
+        `url=${addUrl}&name=${name}&folder=${spath}&token=${userToken}` , 
         url + "/index.php/index/index/addMarkBook",  
-        function(res){
+        function(res)
+        {
             saveResInfo(res);
             let mapRes = JSON.parse(res.currentTarget.response);
             if(mapRes['code'] == 200)
             {
-                let file =  {url:addUrl, name:name, folder:folder, i :mapRes['data']['i']};
-                if(!(folder in markBooks)) addFolder(folder);
-                markBooks[folder]['files'].push(mapRes['data']);
-
-                addFileView(folder,file);
+                //添加到本地
+                let file =  {url:addUrl, name:name, folder:arrpath, i :mapRes['data']['i']};
+                addFileLocal(arrpath,file);
                 saveMarkBook();
+
                 showInfo("添加成功", '添加书签成功');
-                addUrlInput.val("");
-                addNameInput.val("");
-                folderNameInput.val("");
+                //清空输入框
+                addUrlInput.val(""); addNameInput.val("");pathInput.val("");
             }
-            },
-            'post'
+            else
+                showInfo("添加失败", '添加书签失败');
+        },
+        'post'
         )
 }
 
 /**
- * 添加书签
- * folder:staring
- * file:{name  folder  url   i}
+ * 
+ * @param {字符数组} path [..., '父文件夹', '文件夹']
+ * @param {对象} file  {name, url, folder, i}
  */
-function addFileView(folderName, file)
+function addFileLocal(path, file)
 {
+
+    //本地有没有这个文件夹
+    let folder = markBooks.getFolder(path);
+    let folderName =  path[path.length - 1];
+    if(folder == null)
+        folder = addFolderLocal(path);//创建
+        ///////////////////////////////////////////////////////////////////////////
+    //当前是否打开这个文件夹
+    if(JSON.stringify(path) ==  JSON.stringify(activePath))
+    {
+        addFileView(file);
+    }
+    //保存到markbooks
+    folder[folderName]['files'].push(file);
+    setFolderMargin();
+}
+
+/**
+ * 添加文件视图
+ *  * @param {对象} file  {name, url, folder, i}
+ */
+function addFileView(file)
+{
+
     let url = file['url'];
     let host = url.replace( url.replace(/(http|https):\/\/(www.)?(\w+(\.)?)+\/?/,""),"");
+    //拼接html
     let thisFileHtml = fileHtml.replace('{{icon}}', host + '/favicon.ico');
     thisFileHtml =thisFileHtml.replace(/{{name}}/g, file['name']);
     thisFileHtml = thisFileHtml.replace("{{i}}", file['i']);
     thisFileHtml = thisFileHtml.replace('{{url}}', file['url']);
-    filesDiv.append(thisFileHtml);
-    let fileDiv = filesDiv.children().last();
-    //判断是否隐藏
-    let color = markBooks[folderName]['folderDiv'][0]['style']['backgroundColor'];
-
-    if(color == '' || color == 'rgb(238, 238, 238)')
-    {
-        fileDiv.hide();
-    }
-    //保存书签的元素
-    markBooks[folderName]['files'][ markBooks[folderName]['files'].length - 1]['fileDiv'] = fileDiv;
-    filesDiv.children().last().click(fileClick);
-    setFolderMargin();
+    contentDiv.append(thisFileHtml);
+    let fileDiv = contentDiv.children().last();
+    //添加事件
+    fileDiv.click(fileClick);
+    //保存文件元素
+    file['fileDiv'] = fileDiv;
 }
 
 /**
@@ -966,7 +1301,7 @@ function addFileView(folderName, file)
  */
 function parseMarkBooks(importMB){
     let record = false;
-    let folders = [];
+    let folders = [];  // [祖，父，儿.......]
     folders.push('其他');
     let files = [];
     let href = "";
@@ -1003,18 +1338,27 @@ function parseMarkBooks(importMB){
                 if(!folders[folders.length - 1])console.log('error')
                 if( text.trim() == "")
                      text = '未命名'; //如果是空的就命名为空
-                files.push({'name':text, url:href, folder:folders[folders.length - 1]})
+                let path = [];
+                Object.assign(path,folders);//深拷贝路径
+                files.push({
+                    'name':text, 
+                    url:href, 
+                    folder:path
+                })//创建一个文件夹
                 tagName = "";
             } 
             record = false;
         },
         onclosetag(tagName){
-            if(tagName == 'dl')folders.pop();
+            if(tagName == 'dl'){
+                folders.pop();
+                }
         }
         
     });
     parser.write(importMB);
     parser.end();
+    //return ([]);
     return (files);
 }
 
@@ -1027,15 +1371,15 @@ function sync(back){
     //计算特征 下载服务器端数据
     var feature = "";
     let keysSorted = Object.keys(markBooks).sort()
-    for(let i = 0; i < keysSorted.length; i ++ ){
-        feature += keysSorted[i];
-        let files = markBooks[keysSorted[i]]['files'];
-        files = files.sort(function(a,b){ return a['i'] - b['i'] });
-        for(let i2 = 0; i2 < files.length; i2 ++ )
-        {
-            feature += files[i2]['name'];
-        }
-        }
+    // for(let i = 0; i < keysSorted.length; i ++ ){
+    //     feature += keysSorted[i];
+    //     let files = markBooks[keysSorted[i]]['files'];
+    //     files = files.sort(function(a,b){ return a['i'] - b['i'] });
+    //     for(let i2 = 0; i2 < files.length; i2 ++ )
+    //     {
+    //         feature += files[i2]['name'];
+    //     }
+    //     }
         feature = MD5(feature);
         //和服务器对比
         request(
@@ -1053,8 +1397,8 @@ function sync(back){
                 //清除
                 markBooks.deleteAll();
                 foldersDiv.html("");
-                filesDiv.html("");
-                activeFolder = null;
+                contentDiv.html("");
+                activePath = [];
                 //新建
                 let files = mapRes['data'];
                 importFiles(files);
@@ -1110,7 +1454,7 @@ function importHtmlMB(data){
                 {
                     let files = mapRes['data'];
                     importFiles(files)
-                    saveMarkBook();
+                    //saveMarkBook();
                     clickFirst();
                     showInfo('导入成功', "成功导入!");
                     return;
@@ -1127,14 +1471,9 @@ function importHtmlMB(data){
 function importFiles(inputMB){
     for(let i = 0 ; i < inputMB.length; i ++)
     {
-        let folderName = inputMB[i]['folder'] ;
-        if(!(folderName in markBooks))
-        {
-            addFolder(folderName);
-            setFolderMargin();
-        }
-        markBooks[folderName]['files'].push(inputMB[i]);
-        addFileView(folderName, inputMB[i]);
+        //导入的书签的路径
+        let path = JSON.parse(inputMB[i]['folder']) ;
+        addFileLocal(path, inputMB[i]);
     }
     //this.$refs.markBook2.updateFilesHeight();
 }
@@ -1180,10 +1519,14 @@ function outputHtmlMB()
  */
 function clickFirst()
 {
-    let keys = Object.keys(markBooks);
+    if(!('folders' in markBooks))return;
+
+    let folders = markBooks.folders;
+    let keys = Object.keys(folders);
     if(keys.length > 0)
     {
-        markBooks[keys[0]]['folderDiv'].trigger('click');
+        let folderDiv = folders[keys[0]]['folderDiv'];
+        folderDiv.trigger('click');
     }
 }
 
@@ -1205,15 +1548,58 @@ function setFolderMargin()
 }
 
 /**
- * 初始化下拉
+ * 添加书签页下拉框下拉事件
  */
-function setSelect() 
+function dropdown(data) 
+{
+    let m = data.currentTarget.nextSibling.nextSibling;  
+    if(m.style.display == 'none'||!m.style.display)
+    {
+        m.style.display = 'block'
+        pathInput.val('')
+        setSelect();
+    }
+    else
+    {
+        m.style.display = 'none'
+    }
+}
+
+/**
+ * 
+ * 添加书签页下拉框里面元素点击事件
+ * @param {字符串} folderName {}
+ */
+function selectClick(folderName)
+{ 
+    //修改输入框
+    let pathValue = pathInput.val().trim();
+    if(pathValue != '')
+        pathValue = pathInput.val() + '>' + folderName;
+    else
+        pathValue = folderName
+    pathInput.val(pathValue)
+    //修改下拉框
+    let folder = markBooks.getFolder(pathValue.split(">"))[folderName]
+    let folders = folder['folders'];
+    if(Object.keys(folders).lenght != 0)
+        setSelect(folders)
+}
+
+/**
+ * 设置下拉
+ *  @param {对象} parentFolder {'视频网站','音乐网站'...}
+ */
+function setSelect(parentFolder = null) 
 {
     folderSelectDiv.html("")
-    Object.keys(markBooks).forEach((key) => {
+
+    if(parentFolder == null) parentFolder =  markBooks['folders'] 
+    Object.keys(parentFolder).forEach((key) => {
             folderSelectDiv.append(folderSelectHtml.replace('{{folderName}}', key));
             folderSelectDiv.children().last().click(()=>{
-                folderNameInput.val(key);
+                selectClick(key);
+                
             })
         }
     ) 
@@ -1320,3 +1706,4 @@ window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,error
         request(`mail=${userMail}&info=${errInfo}`,"/index.php/index/index/jsError", function(data){
         }, 'post')
 }
+
