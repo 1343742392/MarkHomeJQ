@@ -14,7 +14,7 @@
     <!-- <script type="module" src="__STATIC__/js/request"></script> -->
     <script type="text/javascript" src="__STATIC__/js/htmlparser.js"></script>
 
-    <script type="module" src="__STATIC__/js/main96.js"></script>
+    <script type="module" src="__STATIC__/js/main95big.js"></script>
     <script  type="text/javascript">
   
     </script>
@@ -198,18 +198,17 @@
                     <input type="text" class="form-control mb-2" id="addNameInput" placeholder="名字 例如:百度">
                 
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="folderNameInput" placeholder="新的文件夹名称">
+                        <input type="text" class="form-control" id="folderNameInput" placeholder="新文件夹名称 用>号分层">
                         
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"
-                            onclick="let m = this.nextSibling.nextSibling; m.style.display=(m.style.display == 'none'||!m.style.display) ? 'block':'none';">
+                            <button id="dropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false"
+                            >
                                 现有文件夹
                             </button>
 
                             <div class="dropdown-menu" id="folderSelectDiv">
                                 <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
+
                             </div>
                         </div>
                     </div>
