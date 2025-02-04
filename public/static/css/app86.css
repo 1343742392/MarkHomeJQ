@@ -119,11 +119,17 @@ body{
     display: none;
 }
 
-.del-btn{
+.check-div{
     width: 25%;
-    height: 30px;
-    padding: 2px;
-    padding-top: 4px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.checkbox{
+    height: 45%;
+    margin-right: 5px;
 }
 
 .mb-left{

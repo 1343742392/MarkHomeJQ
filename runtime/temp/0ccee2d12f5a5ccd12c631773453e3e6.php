@@ -1,3 +1,4 @@
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:101:"D:\MyFile\Code\Website\MarkHomeMoreLayer\MarkHomeJQ\public/../application/index\view\index\index.html";i:1738648687;s:95:"D:\MyFile\Code\Website\MarkHomeMoreLayer\MarkHomeJQ\application\index\view\common\markbook.html";i:1733740769;s:91:"D:\MyFile\Code\Website\MarkHomeMoreLayer\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
 <!DOCTYPE html>
 <html lang="zh" style="height:100%">
 <head>
@@ -5,16 +6,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='icon' href="favicon.ico">    
-    <link rel="stylesheet" href="__STATIC__/css/bootstrap.min.css">
-    <!-- <script src="__STATIC__/js/bootstrap.min.js"></script> -->
-    <link rel="stylesheet" href="__STATIC__/css/app86.css">
-    <script src="__STATIC__/js/oldcode.js"></script>
-    <script src="__STATIC__/js/jquery.js"></script>
-    <script src="__STATIC__/js/md5.js"></script>
-    <!-- <script type="module" src="__STATIC__/js/request"></script> -->
-    <script type="text/javascript" src="__STATIC__/js/htmlparser.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <!-- <script src="/static/js/bootstrap.min.js"></script> -->
+    <link rel="stylesheet" href="/static/css/app86.css">
+    <script src="/static/js/oldcode.js"></script>
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/md5.js"></script>
+    <!-- <script type="module" src="/static/js/request"></script> -->
+    <script type="text/javascript" src="/static/js/htmlparser.js"></script>
 
-    <script type="module" src="__STATIC__/js/main97big.js"></script>
+    <script type="module" src="/static/js/main97big.js"></script>
     <script  type="text/javascript">
   
     </script>
@@ -74,7 +75,19 @@
                     </div>
                 </div>
 
-                {include file='common:markbook'}
+                <div class="mark-book radius-card d-flex align-items-end">
+    <div id="mb-left" class="mb-left hide-rollbar">
+        <div id="foldersDiv" class='w-100 folders align-items-center' >
+            
+        </div>
+    </div>
+
+    <div  class="mb-right hide-rollbar" >
+        <div id="contentDiv" class="files">
+
+        </div>
+    </div>
+</div>
 
                 <div id="editBtns" style="display: none !important;" class="radius-card mb-3 w-100 p-3 d-flex justify-content-around">
                     <button id="copyBtn" class="btn btn-secondary">
@@ -107,7 +120,13 @@
                 
 
                 <div id="homeBackBtn" class="radius-card  p-3 mb-5" style="display: none;">
-                    {include file='common:back'}
+                    <button class="btn w-100 btn-secondary p-2 center-container" onclick="window.back()">
+    <svg  class="mr-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+    </svg>
+
+    返回
+</button>
                 </div>
 
                 <div id="searchDiv" class="home-bottom radius-card">
@@ -140,7 +159,13 @@
                         退出登录
                     </button>
     
-                    {include file='common:back'}
+                    <button class="btn w-100 btn-secondary p-2 center-container" onclick="window.back()">
+    <svg  class="mr-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+    </svg>
+
+    返回
+</button>
                 </div>
             </div>
 
@@ -198,7 +223,13 @@
                         搜索引擎
                     </button>
 
-                    {include file='common:back'}
+                    <button class="btn w-100 btn-secondary p-2 center-container" onclick="window.back()">
+    <svg  class="mr-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+    </svg>
+
+    返回
+</button>
                 </div>
             </div>
 
@@ -207,7 +238,13 @@
                     <p style="color:#666;">修改文件夹名字</p>
                     <input type="text" class="form-control mb-2" id="folderName" placeholder=""/>
                     <button class="btn w-100 btn-primary mb-2 p-2 " value="">修改</button>
-                    {include file='common:back'}
+                    <button class="btn w-100 btn-secondary p-2 center-container" onclick="window.back()">
+    <svg  class="mr-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+    </svg>
+
+    返回
+</button>
                 </div>
             </div>
 
@@ -217,7 +254,13 @@
                     <input type="text" class="form-control mb-2" id="fileNameInput" placeholder=""/>
                     <input type="text" class="form-control mb-2" id="fileUrlInput" placeholder=""/>
                     <button class="btn w-100 btn-primary mb-2 p-2 ">修改</button>
-                    {include file='common:back'}
+                    <button class="btn w-100 btn-secondary p-2 center-container" onclick="window.back()">
+    <svg  class="mr-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+    </svg>
+
+    返回
+</button>
                 </div>
             </div>
 
@@ -251,7 +294,13 @@
                         添加
                     </button>
 
-                    {include file='common:back'}
+                    <button class="btn w-100 btn-secondary p-2 center-container" onclick="window.back()">
+    <svg  class="mr-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+    </svg>
+
+    返回
+</button>
                 </div>
             </div>
 
@@ -266,7 +315,13 @@
                         <button id="kuake" type="button" class="btn btn-outline-secondary w-25">夸克</button>
                     </div>
 
-                    {include file='common:back'}
+                    <button class="btn w-100 btn-secondary p-2 center-container" onclick="window.back()">
+    <svg  class="mr-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+    </svg>
+
+    返回
+</button>
                 </div>
             </div>
 
