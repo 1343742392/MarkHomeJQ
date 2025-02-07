@@ -57,47 +57,26 @@ class Tool{
 
     }
 
-    public static function GetMarkBookFeature($markBook)
+    public static function GetMarkBookFeature($markBooks)
     {
-        usort($markBook,function($a,$b){
-            if ($a['folder'] == $b['folder']) {
-                return 0;
-            }
-            return ($a['folder'] < $b['folder']) ? -1 : 1;
+        //根据i排序
+        usort($markBooks,function($a,$b){
+            return $a->i - $b->i;
         });
-        $folders = array_keys(array_flip(array_column($markBook, 'folder')));
         $thisFeature = ""; 
 
-        global  $folder;
-        global $i;
-        //遍历文件夹
-        for($i = 0 ; $i < count($folders); $i ++)
-        {
-            //连接文件夹名字
-            $thisFeature = $thisFeature.$folders[$i];
-            //过滤其他文件的文件
-            $folder = $folders[$i];
-            $fuserMarkBook = array_filter($markBook, function($file)
-            {
-                global $folder ;
-                return $file->folder == $folder;
-            });
-            
-            //排序这堆文件
-            usort($fuserMarkBook,  function ($a, $b)
-            {
-                return $a->i - $b->i;
-            });
-            //提取名字列
-            $anmes = array_column($fuserMarkBook, 'name');
-            //拼到特征里
-            for($i2 = 0; $i2 < count($anmes); $i2 ++ )
-            {
-                //连接文件名字
-                $thisFeature = $thisFeature.$anmes[$i2];
-            }
-        }
 
+        // 提取多个列
+        $markBooks = array_map(function($item) {
+        return [
+            'name' => $item['name'],
+            'url' => $item['url'],
+            'i' => $item['i'],
+
+            'folder' => $item['folder']
+        ];
+        }, $markBooks);
+        $thisFeature = json_encode($markBooks, JSON_UNESCAPED_UNICODE + JSON_UNESCAPED_SLASHES);
         return md5($thisFeature);
     }
 

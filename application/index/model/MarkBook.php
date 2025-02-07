@@ -7,4 +7,6 @@ class MarkBook extends Model
     protected $type = [
         'create_time'      =>  'integer',
     ];
+
+
 }

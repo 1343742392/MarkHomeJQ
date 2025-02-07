@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:101:"D:\MyFile\Code\Website\MarkHomeMoreLayer\MarkHomeJQ\public/../application/index\view\index\index.html";i:1738648687;s:95:"D:\MyFile\Code\Website\MarkHomeMoreLayer\MarkHomeJQ\application\index\view\common\markbook.html";i:1733740769;s:91:"D:\MyFile\Code\Website\MarkHomeMoreLayer\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:101:"D:\MyFile\Code\Website\MarkHomeMoreLayer\MarkHomeJQ\public/../application/index\view\index\index.html";i:1738912353;s:95:"D:\MyFile\Code\Website\MarkHomeMoreLayer\MarkHomeJQ\application\index\view\common\markbook.html";i:1733740769;s:91:"D:\MyFile\Code\Website\MarkHomeMoreLayer\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
 <!DOCTYPE html>
 <html lang="zh" style="height:100%">
 <head>
@@ -102,17 +102,17 @@
                         粘贴
                     </button>
 
-                    <button class="btn btn-secondary">
+                    <button  id='deleteBtn' class="btn btn-secondary">
                         <svg style="    padding-top: 0.1rem;" t="1738503733381" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="25886" width="16" height="16"><path d="M544 64C279.04 64 64 279.04 64 544S279.04 1024 544 1024 1024 808.96 1024 544 808.96 64 544 64zM544 960C314.24 960 128 773.76 128 544S314.24 128 544 128C773.76 128 960 314.24 960 544S773.76 960 544 960zM588.16 540.8l168.32-166.4c12.8-12.8 12.8-33.28 0-45.44-12.8-12.8-33.28-12.8-46.08 0L542.08 494.08 376.96 328.32c-12.8-12.8-33.28-12.8-45.44 0-12.8 12.8-12.8 33.28 0 45.44l164.48 165.76-174.72 172.8c-12.8 12.8-12.8 33.28 0 45.44 12.8 12.8 33.28 12.8 46.08 0l174.08-172.16 171.52 172.16c12.8 12.8 33.28 12.8 45.44 0 12.8-12.8 12.8-33.28 0-45.44L588.16 540.8z" p-id="25887" fill="#ffffff"></path></svg>
                         删除
                     </button>
 
-                    <button class="btn btn-secondary">
+                    <button   id='editObjectBtn'  class="btn btn-secondary">
                         <svg class="pt-1" t="1738501085111" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="20633" width="16" height="16"><path d="M631.808 100.864H187.904c-69.12 0-126.464 54.784-126.464 122.88v611.328c0 68.096 56.832 122.88 126.976 122.88h632.832c70.144 0 126.976-54.784 126.976-122.88V409.088h-63.488v425.984c0 34.304-28.672 61.44-64 61.44H188.416c-35.328 0-64-27.648-64-61.44V223.744c0-33.792 28.672-61.44 62.976-61.44h443.904v-61.44z" p-id="20634" fill="#ffffff"></path><path d="M459.264 507.392c-6.144 5.632-9.216 13.312-9.216 21.504s3.584 15.872 9.216 21.504c12.288 11.776 32.256 11.776 45.056 0L952.32 117.76c6.144-5.632 9.216-13.312 9.216-21.504s-3.584-15.872-9.216-21.504c-12.288-11.776-32.256-11.776-45.056 0L459.264 507.392z" p-id="20635" fill="#ffffff"></path></svg>
                         编辑
                     </button>
 
-                    <button class="btn btn-secondary">
+                    <button id="selectAll" class="btn btn-secondary">
                         <svg class="pt-1" t="1738501130453" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="21782" width="16" height="16"><path d="M0.000244 95.953148v831.593948c0 52.974134 42.979014 95.953148 95.953148 95.953148h831.593948c52.974134 0 95.953148-42.979014 95.953148-95.953148v-831.593948c0-52.974134-42.979014-95.953148-95.953148-95.953148h-831.593948c-52.974134 0-95.953148 42.979014-95.953148 95.953148z m895.562714 863.578331h-767.625183c-35.282772 0-63.968765-28.685993-63.968766-63.968765v-767.625183c0-35.282772 28.685993-63.968765 63.968766-63.968766h767.625183c35.282772 0 63.968765 28.685993 63.968765 63.968766v767.625183c0 35.282772-28.685993 63.968765-63.968765 63.968765z" p-id="21783" fill="#ffffff"></path><path d="M825.896974 352.128062L486.662616 691.362421c-24.987799 24.987799-65.468033 24.987799-90.455832 0L260.573011 555.628697c-12.493899-12.493899-12.493899-32.783992 0-45.177941 12.493899-12.493899 32.783992-12.493899 45.277892 0L430.290142 634.889995c6.196974 6.196974 16.391996 6.196974 22.58897 0l327.939873-327.939873c12.493899-12.493899 32.783992-12.493899 45.277892 0 12.293997 12.493899 12.293997 32.684041-0.199903 45.17794z" p-id="21784" fill="#ffffff"></path></svg>
                         全选
                     </button>
@@ -183,17 +183,9 @@
                         <svg  class="mr-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                          </svg>
-
-                        管理书签
-                    </button>
-
-                    <button id="delBtn" class="btn w-100 btn-primary mb-3 p-2 center-container">
-                        <svg  class="mr-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"/>
                         </svg>
 
-                        删除书签
+                        管理书签
                     </button>
 
                     <button id="importBtn" class="btn w-100 btn-info mb-3 p-2 center-container" onclick="$('#favoritesInput').click()">
