@@ -196,7 +196,11 @@ class Windows extends Pipes
             return;
         }
 
+<<<<<<< HEAD
         if (null !== $r && 0 < count($r)) {
+=======
+        if (null !== $w && 0 < count($r)) {
+>>>>>>> main
             $data = '';
             while ($dataread = fread($r['input'], self::CHUNK_SIZE)) {
                 $data .= $dataread;

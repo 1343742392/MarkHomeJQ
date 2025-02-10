@@ -19,10 +19,15 @@ class ModelNotFoundException extends DbException
 
     /**
      * 构造方法
+<<<<<<< HEAD
      * @access public
      * @param  string $message
      * @param  string $model
      * @param  array  $config
+=======
+     * @param string $message
+     * @param string $model
+>>>>>>> main
      */
     public function __construct($message, $model = '', array $config = [])
     {

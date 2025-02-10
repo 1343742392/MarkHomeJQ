@@ -21,12 +21,20 @@ class BindParamException extends DbException
 
     /**
      * BindParamException constructor.
+<<<<<<< HEAD
      * @access public
      * @param  string $message
      * @param  array  $config
      * @param  string $sql
      * @param  array    $bind
      * @param  int    $code
+=======
+     * @param string $message
+     * @param array  $config
+     * @param string $sql
+     * @param array    $bind
+     * @param int    $code
+>>>>>>> main
      */
     public function __construct($message, $config, $sql, $bind, $code = 10502)
     {

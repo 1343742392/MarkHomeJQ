@@ -19,11 +19,16 @@ class Collection extends BaseCollection
     /**
      * 延迟预载入关联查询
      * @access public
+<<<<<<< HEAD
      * @param  mixed $relation 关联
+=======
+     * @param mixed $relation 关联
+>>>>>>> main
      * @return $this
      */
     public function load($relation)
     {
+<<<<<<< HEAD
         if (!$this->isEmpty()) {
             $item = current($this->items);
             $item->eagerlyResultSet($this->items, $relation);
@@ -45,14 +50,23 @@ class Collection extends BaseCollection
             $model->bindAttr($relation, $attrs);
         });
 
+=======
+        $item = current($this->items);
+        $item->eagerlyResultSet($this->items, $relation);
+>>>>>>> main
         return $this;
     }
 
     /**
      * 设置需要隐藏的输出属性
      * @access public
+<<<<<<< HEAD
      * @param  array $hidden   属性列表
      * @param  bool  $override 是否覆盖
+=======
+     * @param array $hidden   属性列表
+     * @param bool  $override 是否覆盖
+>>>>>>> main
      * @return $this
      */
     public function hidden($hidden = [], $override = false)
@@ -61,15 +75,23 @@ class Collection extends BaseCollection
             /** @var Model $model */
             $model->hidden($hidden, $override);
         });
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
         return $this;
     }
 
     /**
      * 设置需要输出的属性
+<<<<<<< HEAD
      * @access public
      * @param  array $visible
      * @param  bool  $override 是否覆盖
+=======
+     * @param array $visible
+     * @param bool  $override 是否覆盖
+>>>>>>> main
      * @return $this
      */
     public function visible($visible = [], $override = false)
@@ -78,15 +100,23 @@ class Collection extends BaseCollection
             /** @var Model $model */
             $model->visible($visible, $override);
         });
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
         return $this;
     }
 
     /**
      * 设置需要追加的输出属性
      * @access public
+<<<<<<< HEAD
      * @param  array $append   属性列表
      * @param  bool  $override 是否覆盖
+=======
+     * @param array $append   属性列表
+     * @param bool  $override 是否覆盖
+>>>>>>> main
      * @return $this
      */
     public function append($append = [], $override = false)
@@ -95,6 +125,7 @@ class Collection extends BaseCollection
             /** @var Model $model */
             $model && $model->append($append, $override);
         });
+<<<<<<< HEAD
 
         return $this;
     }
@@ -115,4 +146,9 @@ class Collection extends BaseCollection
 
         return $this;
     }
+=======
+        return $this;
+    }
+
+>>>>>>> main
 }

@@ -37,6 +37,14 @@ class Console
         $this->formatter->setDecorated($decorated);
     }
 
+<<<<<<< HEAD
+=======
+    public function getFormatter()
+    {
+        return $this->formatter;
+    }
+
+>>>>>>> main
     public function setDecorated($decorated)
     {
         $this->formatter->setDecorated($decorated);
@@ -168,7 +176,11 @@ class Console
             return $this->terminalDimensions;
         }
 
+<<<<<<< HEAD
         if ('\\' === DIRECTORY_SEPARATOR) {
+=======
+        if ('\\' === DS) {
+>>>>>>> main
             if (preg_match('/^(\d+)x\d+ \(\d+x(\d+)\)$/', trim(getenv('ANSICON')), $matches)) {
                 return [(int) $matches[1], (int) $matches[2]];
             }

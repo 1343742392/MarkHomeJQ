@@ -12,8 +12,11 @@
 namespace think\db\builder;
 
 use think\db\Builder;
+<<<<<<< HEAD
 use think\db\Expression;
 use think\db\Query;
+=======
+>>>>>>> main
 use think\Exception;
 
 /**
@@ -21,6 +24,7 @@ use think\Exception;
  */
 class Mysql extends Builder
 {
+<<<<<<< HEAD
     // 查询表达式解析
     protected $parser = [
         'parseCompare'     => ['=', '<>', '>', '>=', '<', '<='],
@@ -35,6 +39,8 @@ class Mysql extends Builder
         'parseExists'      => ['NOT EXISTS', 'EXISTS'],
         'parseColumn'      => ['COLUMN'],
     ];
+=======
+>>>>>>> main
 
     protected $insertAllSql = '%INSERT% INTO %TABLE% (%FIELD%) VALUES %DATA% %COMMENT%';
     protected $updateSql    = 'UPDATE %TABLE% %JOIN% SET %SET% %WHERE% %ORDER%%LIMIT% %LOCK%%COMMENT%';
@@ -42,6 +48,7 @@ class Mysql extends Builder
     /**
      * 生成insertall SQL
      * @access public
+<<<<<<< HEAD
      * @param  Query     $query   查询对象
      * @param  array     $dataSet 数据集
      * @param  bool      $replace 是否replace
@@ -76,10 +83,55 @@ class Mysql extends Builder
             $fields[] = $this->parseKey($query, $field);
         }
 
+=======
+     * @param array     $dataSet 数据集
+     * @param array     $options 表达式
+     * @param bool      $replace 是否replace
+     * @return string
+     * @throws Exception
+     */
+    public function insertAll($dataSet, $options = [], $replace = false)
+    {
+        // 获取合法的字段
+        if ('*' == $options['field']) {
+            $fields = array_keys($this->query->getFieldsType($options['table']));
+        } else {
+            $fields = $options['field'];
+        }
+
+        foreach ($dataSet as $data) {
+            foreach ($data as $key => $val) {
+                if (!in_array($key, $fields, true)) {
+                    if ($options['strict']) {
+                        throw new Exception('fields not exists:[' . $key . ']');
+                    }
+                    unset($data[$key]);
+                } elseif (is_null($val)) {
+                    $data[$key] = 'NULL';
+                } elseif (is_scalar($val)) {
+                    $data[$key] = $this->parseValue($val, $key);
+                } elseif (is_object($val) && method_exists($val, '__toString')) {
+                    // 对象数据写入
+                    $data[$key] = $val->__toString();
+                } else {
+                    // 过滤掉非标量数据
+                    unset($data[$key]);
+                }
+            }
+            $value    = array_values($data);
+            $values[] = '( ' . implode(',', $value) . ' )';
+
+            if (!isset($insertFields)) {
+                $insertFields = array_map([$this, 'parseKey'], array_keys($data));
+            }
+        }
+
+>>>>>>> main
         return str_replace(
             ['%INSERT%', '%TABLE%', '%FIELD%', '%DATA%', '%COMMENT%'],
             [
                 $replace ? 'REPLACE' : 'INSERT',
+<<<<<<< HEAD
                 $this->parseTable($query, $options['table']),
                 implode(' , ', $fields),
                 implode(' , ', $values),
@@ -105,10 +157,18 @@ class Mysql extends Builder
         }
 
         return $key . ' ' . $exp . ' ' . $value;
+=======
+                $this->parseTable($options['table'], $options),
+                implode(' , ', $insertFields),
+                implode(' , ', $values),
+                $this->parseComment($options['comment']),
+            ], $this->insertAllSql);
+>>>>>>> main
     }
 
     /**
      * 字段和表名处理
+<<<<<<< HEAD
      * @access public
      * @param  Query     $query 查询对象
      * @param  mixed     $key   字段名
@@ -116,6 +176,14 @@ class Mysql extends Builder
      * @return string
      */
     public function parseKey(Query $query, $key, $strict = false)
+=======
+     * @access protected
+     * @param mixed  $key
+     * @param array  $options
+     * @return string
+     */
+    protected function parseKey($key, $options = [], $strict = false)
+>>>>>>> main
     {
         if (is_numeric($key)) {
             return $key;
@@ -124,6 +192,7 @@ class Mysql extends Builder
         }
 
         $key = trim($key);
+<<<<<<< HEAD
 
         if(strpos($key, '->>') && false === strpos($key, '(')){
             // JSON字段支持
@@ -148,35 +217,65 @@ class Mysql extends Builder
 
             if (isset($alias[$table])) {
                 $table = $alias[$table];
+=======
+        if (strpos($key, '$.') && false === strpos($key, '(')) {
+            // JSON字段支持
+            list($field, $name) = explode('$.', $key);
+            return 'json_extract(' . $field . ', \'$.' . $name . '\')';
+        } elseif (strpos($key, '.') && !preg_match('/[,\'\"\(\)`\s]/', $key)) {
+            list($table, $key) = explode('.', $key, 2);
+            if ('__TABLE__' == $table) {
+                $table = $this->query->getTable();
+            }
+            if (isset($options['alias'][$table])) {
+                $table = $options['alias'][$table];
+>>>>>>> main
             }
         }
 
         if ($strict && !preg_match('/^[\w\.\*]+$/', $key)) {
             throw new Exception('not support data:' . $key);
         }
+<<<<<<< HEAD
 
         if ('*' != $key && !preg_match('/[,\'\"\*\(\)`.\s]/', $key)) {
             $key = '`' . $key . '`';
         }
 
+=======
+        if ('*' != $key && ($strict || !preg_match('/[,\'\"\*\(\)`.\s]/', $key))) {
+            $key = '`' . $key . '`';
+        }
+>>>>>>> main
         if (isset($table)) {
             if (strpos($table, '.')) {
                 $table = str_replace('.', '`.`', $table);
             }
+<<<<<<< HEAD
 
             $key = '`' . $table . '`.' . $key;
         }
 
+=======
+            $key = '`' . $table . '`.' . $key;
+        }
+>>>>>>> main
         return $key;
     }
 
     /**
      * 随机排序
      * @access protected
+<<<<<<< HEAD
      * @param  Query     $query        查询对象
      * @return string
      */
     protected function parseRand(Query $query)
+=======
+     * @return string
+     */
+    protected function parseRand()
+>>>>>>> main
     {
         return 'rand()';
     }

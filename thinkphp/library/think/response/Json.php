@@ -25,7 +25,11 @@ class Json extends Response
     /**
      * 处理数据
      * @access protected
+<<<<<<< HEAD
      * @param  mixed $data 要处理的数据
+=======
+     * @param mixed $data 要处理的数据
+>>>>>>> main
      * @return mixed
      * @throws \Exception
      */
@@ -35,7 +39,11 @@ class Json extends Response
             // 返回JSON数据格式到客户端 包含状态信息
             $data = json_encode($data, $this->options['json_encode_param']);
 
+<<<<<<< HEAD
             if (false === $data) {
+=======
+            if ($data === false) {
+>>>>>>> main
                 throw new \InvalidArgumentException(json_last_error_msg());
             }
 

@@ -57,14 +57,23 @@ class Bootstrap extends Paginator
      */
     protected function getLinks()
     {
+<<<<<<< HEAD
         if ($this->simple) {
             return '';
         }
+=======
+        if ($this->simple)
+            return '';
+>>>>>>> main
 
         $block = [
             'first'  => null,
             'slider' => null,
+<<<<<<< HEAD
             'last'   => null,
+=======
+            'last'   => null
+>>>>>>> main
         ];
 
         $side   = 3;
@@ -197,7 +206,11 @@ class Bootstrap extends Paginator
      */
     protected function getPageLinkWrapper($url, $page)
     {
+<<<<<<< HEAD
         if ($this->currentPage() == $page) {
+=======
+        if ($page == $this->currentPage()) {
+>>>>>>> main
             return $this->getActivePageWrapper($page);
         }
 

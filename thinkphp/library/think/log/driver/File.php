@@ -12,6 +12,10 @@
 namespace think\log\driver;
 
 use think\App;
+<<<<<<< HEAD
+=======
+use think\Request;
+>>>>>>> main
 
 /**
  * 本地化调试输出到文件
@@ -19,15 +23,23 @@ use think\App;
 class File
 {
     protected $config = [
+<<<<<<< HEAD
         'time_format' => 'c',
         'single'      => false,
         'file_size'   => 2097152,
         'path'        => '',
+=======
+        'time_format' => ' c ',
+        'single'      => false,
+        'file_size'   => 2097152,
+        'path'        => LOG_PATH,
+>>>>>>> main
         'apart_level' => [],
         'max_files'   => 0,
         'json'        => false,
     ];
 
+<<<<<<< HEAD
     protected $app;
 
     // 实例化并传入参数
@@ -44,12 +56,24 @@ class File
         } elseif (substr($this->config['path'], -1) != DIRECTORY_SEPARATOR) {
             $this->config['path'] .= DIRECTORY_SEPARATOR;
         }
+=======
+    // 实例化并传入参数
+    public function __construct($config = [])
+    {
+        if (is_array($config)) {
+            $this->config = array_merge($this->config, $config);
+        }
+>>>>>>> main
     }
 
     /**
      * 日志写入接口
      * @access public
+<<<<<<< HEAD
      * @param  array    $log    日志信息
+=======
+     * @param  array    $log 日志信息
+>>>>>>> main
      * @param  bool     $append 是否追加请求信息
      * @return bool
      */
@@ -61,7 +85,10 @@ class File
         !is_dir($path) && mkdir($path, 0755, true);
 
         $info = [];
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
         foreach ($log as $type => $val) {
 
             foreach ($val as $msg) {
@@ -77,7 +104,10 @@ class File
                 $filename = $this->getApartLevelFile($path, $type);
 
                 $this->write($info[$type], $filename, true, $append);
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
                 unset($info[$type]);
             }
         }
@@ -90,6 +120,7 @@ class File
     }
 
     /**
+<<<<<<< HEAD
      * 日志写入
      * @access protected
      * @param  array     $message 日志信息
@@ -129,12 +160,15 @@ class File
     }
 
     /**
+=======
+>>>>>>> main
      * 获取主日志文件名
      * @access public
      * @return string
      */
     protected function getMasterLogFile()
     {
+<<<<<<< HEAD
         if ($this->config['max_files']) {
             $files = glob($this->config['path'] . '*.log');
 
@@ -155,6 +189,25 @@ class File
         } else {
             if ($this->config['max_files']) {
                 $filename = date('Ymd') . $cli . '.log';
+=======
+        if ($this->config['single']) {
+            $name = is_string($this->config['single']) ? $this->config['single'] : 'single';
+
+            $destination = $this->config['path'] . $name . '.log';
+        } else {
+            $cli = PHP_SAPI == 'cli' ? '_cli' : '';
+
+            if ($this->config['max_files']) {
+                $filename = date('Ymd') . $cli . '.log';
+                $files    = glob($this->config['path'] . '*.log');
+
+                try {
+                    if (count($files) > $this->config['max_files']) {
+                        unlink($files[0]);
+                    }
+                } catch (\Exception $e) {
+                }
+>>>>>>> main
             } else {
                 $filename = date('Ym') . DIRECTORY_SEPARATOR . date('d') . $cli . '.log';
             }
@@ -178,6 +231,7 @@ class File
 
         if ($this->config['single']) {
             $name = is_string($this->config['single']) ? $this->config['single'] : 'single';
+<<<<<<< HEAD
         } elseif ($this->config['max_files']) {
             $name = date('Ymd');
         } else {
@@ -185,6 +239,50 @@ class File
         }
 
         return $path . DIRECTORY_SEPARATOR . $name . '_' . $type . $cli . '.log';
+=======
+
+            $name .= '_' . $type;
+        } elseif ($this->config['max_files']) {
+            $name = date('Ymd') . '_' . $type . $cli;
+        } else {
+            $name = date('d') . '_' . $type . $cli;
+        }
+
+        return $path . DIRECTORY_SEPARATOR . $name . '.log';
+    }
+
+    /**
+     * 日志写入
+     * @access protected
+     * @param  array     $message 日志信息
+     * @param  string    $destination 日志文件
+     * @param  bool      $apart 是否独立文件写入
+     * @param  bool      $append 是否追加请求信息
+     * @return bool
+     */
+    protected function write($message, $destination, $apart = false, $append = false)
+    {
+        // 检测日志文件大小，超过配置大小则备份日志文件重新生成
+        $this->checkLogSize($destination);
+
+        // 日志信息封装
+        $info['timestamp'] = date($this->config['time_format']);
+
+        foreach ($message as $type => $msg) {
+            $info[$type] = is_array($msg) ? implode("\r\n", $msg) : $msg;
+        }
+
+        if (PHP_SAPI == 'cli') {
+            $message = $this->parseCliLog($info);
+        } else {
+            // 添加调试日志
+            $this->getDebugLog($info, $append, $apart);
+
+            $message = $this->parseLog($info);
+        }
+
+        return error_log($message, 3, $destination);
+>>>>>>> main
     }
 
     /**
@@ -212,14 +310,24 @@ class File
     protected function parseCliLog($info)
     {
         if ($this->config['json']) {
+<<<<<<< HEAD
             $message = json_encode($info, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+=======
+            $message = json_encode($info, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\r\n";
+>>>>>>> main
         } else {
             $now = $info['timestamp'];
             unset($info['timestamp']);
 
+<<<<<<< HEAD
             $message = implode(PHP_EOL, $info);
 
             $message = "[{$now}]" . $message . PHP_EOL;
+=======
+            $message = implode("\r\n", $info);
+
+            $message = "[{$now}]" . $message . "\r\n";
+>>>>>>> main
         }
 
         return $message;
@@ -233,15 +341,25 @@ class File
      */
     protected function parseLog($info)
     {
+<<<<<<< HEAD
         $requestInfo = [
             'ip'     => $this->app['request']->ip(),
             'method' => $this->app['request']->method(),
             'host'   => $this->app['request']->host(),
             'uri'    => $this->app['request']->url(),
+=======
+        $request     = Request::instance();
+        $requestInfo = [
+            'ip'     => $request->ip(),
+            'method' => $request->method(),
+            'host'   => $request->host(),
+            'uri'    => $request->url(),
+>>>>>>> main
         ];
 
         if ($this->config['json']) {
             $info = $requestInfo + $info;
+<<<<<<< HEAD
             return json_encode($info, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
         }
 
@@ -249,10 +367,20 @@ class File
         unset($info['timestamp']);
 
         return implode(PHP_EOL, $info) . PHP_EOL;
+=======
+            return json_encode($info, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\r\n";
+        }
+
+        array_unshift($info, "---------------------------------------------------------------\r\n[{$info['timestamp']}] {$requestInfo['ip']} {$requestInfo['method']} {$requestInfo['host']}{$requestInfo['uri']}");
+        unset($info['timestamp']);
+
+        return implode("\r\n", $info) . "\r\n";
+>>>>>>> main
     }
 
     protected function getDebugLog(&$info, $append, $apart)
     {
+<<<<<<< HEAD
         if ($this->app->isDebug() && $append) {
 
             if ($this->config['json']) {
@@ -261,6 +389,16 @@ class File
                 $reqs    = $runtime > 0 ? number_format(1 / $runtime, 2) : '∞';
 
                 $memory_use = number_format((memory_get_usage() - $this->app->getBeginMem()) / 1024, 2);
+=======
+        if (App::$debug && $append) {
+
+            if ($this->config['json']) {
+                // 获取基本信息
+                $runtime = round(microtime(true) - THINK_START_TIME, 10);
+                $reqs    = $runtime > 0 ? number_format(1 / $runtime, 2) : '∞';
+
+                $memory_use = number_format((memory_get_usage() - THINK_START_MEM) / 1024, 2);
+>>>>>>> main
 
                 $info = [
                     'runtime' => number_format($runtime, 6) . 's',
@@ -271,10 +409,17 @@ class File
 
             } elseif (!$apart) {
                 // 增加额外的调试信息
+<<<<<<< HEAD
                 $runtime = round(microtime(true) - $this->app->getBeginTime(), 10);
                 $reqs    = $runtime > 0 ? number_format(1 / $runtime, 2) : '∞';
 
                 $memory_use = number_format((memory_get_usage() - $this->app->getBeginMem()) / 1024, 2);
+=======
+                $runtime = round(microtime(true) - THINK_START_TIME, 10);
+                $reqs    = $runtime > 0 ? number_format(1 / $runtime, 2) : '∞';
+
+                $memory_use = number_format((memory_get_usage() - THINK_START_MEM) / 1024, 2);
+>>>>>>> main
 
                 $time_str   = '[运行时间：' . number_format($runtime, 6) . 's] [吞吐率：' . $reqs . 'req/s]';
                 $memory_str = ' [内存消耗：' . $memory_use . 'kb]';

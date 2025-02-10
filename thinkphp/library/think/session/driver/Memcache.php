@@ -11,10 +11,17 @@
 
 namespace think\session\driver;
 
+<<<<<<< HEAD
 use SessionHandlerInterface;
 use think\Exception;
 
 class Memcache implements SessionHandlerInterface
+=======
+use SessionHandler;
+use think\Exception;
+
+class Memcache extends SessionHandler
+>>>>>>> main
 {
     protected $handler = null;
     protected $config  = [
@@ -34,8 +41,13 @@ class Memcache implements SessionHandlerInterface
     /**
      * 打开Session
      * @access public
+<<<<<<< HEAD
      * @param  string    $savePath
      * @param  mixed     $sessName
+=======
+     * @param string    $savePath
+     * @param mixed     $sessName
+>>>>>>> main
      */
     public function open($savePath, $sessName)
     {
@@ -43,6 +55,7 @@ class Memcache implements SessionHandlerInterface
         if (!extension_loaded('memcache')) {
             throw new Exception('not support:memcache');
         }
+<<<<<<< HEAD
 
         $this->handler = new \Memcache;
 
@@ -54,6 +67,15 @@ class Memcache implements SessionHandlerInterface
             $ports[0] = 11211;
         }
 
+=======
+        $this->handler = new \Memcache;
+        // 支持集群
+        $hosts = explode(',', $this->config['host']);
+        $ports = explode(',', $this->config['port']);
+        if (empty($ports[0])) {
+            $ports[0] = 11211;
+        }
+>>>>>>> main
         // 建立连接
         foreach ((array) $hosts as $i => $host) {
             $port = isset($ports[$i]) ? $ports[$i] : $ports[0];
@@ -61,7 +83,10 @@ class Memcache implements SessionHandlerInterface
             $this->handler->addServer($host, $port, $this->config['persistent'], 1, $this->config['timeout']) :
             $this->handler->addServer($host, $port, $this->config['persistent'], 1);
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
         return true;
     }
 
@@ -74,14 +99,21 @@ class Memcache implements SessionHandlerInterface
         $this->gc(ini_get('session.gc_maxlifetime'));
         $this->handler->close();
         $this->handler = null;
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
         return true;
     }
 
     /**
      * 读取Session
      * @access public
+<<<<<<< HEAD
      * @param  string $sessID
+=======
+     * @param string $sessID
+>>>>>>> main
      */
     public function read($sessID)
     {
@@ -91,8 +123,13 @@ class Memcache implements SessionHandlerInterface
     /**
      * 写入Session
      * @access public
+<<<<<<< HEAD
      * @param  string    $sessID
      * @param  string    $sessData
+=======
+     * @param string    $sessID
+     * @param String    $sessData
+>>>>>>> main
      * @return bool
      */
     public function write($sessID, $sessData)
@@ -103,7 +140,11 @@ class Memcache implements SessionHandlerInterface
     /**
      * 删除Session
      * @access public
+<<<<<<< HEAD
      * @param  string $sessID
+=======
+     * @param string $sessID
+>>>>>>> main
      * @return bool
      */
     public function destroy($sessID)
@@ -114,7 +155,11 @@ class Memcache implements SessionHandlerInterface
     /**
      * Session 垃圾回收
      * @access public
+<<<<<<< HEAD
      * @param  string $sessMaxLifeTime
+=======
+     * @param string $sessMaxLifeTime
+>>>>>>> main
      * @return true
      */
     public function gc($sessMaxLifeTime)

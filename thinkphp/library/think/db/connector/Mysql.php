@@ -13,7 +13,11 @@ namespace think\db\connector;
 
 use PDO;
 use think\db\Connection;
+<<<<<<< HEAD
 use think\db\Query;
+=======
+use think\Log;
+>>>>>>> main
 
 /**
  * mysql数据库驱动
@@ -24,6 +28,7 @@ class Mysql extends Connection
     protected $builder = '\\think\\db\\builder\\Mysql';
 
     /**
+<<<<<<< HEAD
      * 初始化
      * @access protected
      * @return void
@@ -49,6 +54,11 @@ class Mysql extends Connection
      * 解析pdo连接的dsn信息
      * @access protected
      * @param  array $config 连接信息
+=======
+     * 解析pdo连接的dsn信息
+     * @access protected
+     * @param array $config 连接信息
+>>>>>>> main
      * @return string
      */
     protected function parseDsn($config)
@@ -65,38 +75,55 @@ class Mysql extends Connection
         if (!empty($config['charset'])) {
             $dsn .= ';charset=' . $config['charset'];
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
         return $dsn;
     }
 
     /**
      * 取得数据表的字段信息
      * @access public
+<<<<<<< HEAD
      * @param  string $tableName
+=======
+     * @param string $tableName
+>>>>>>> main
      * @return array
      */
     public function getFields($tableName)
     {
         list($tableName) = explode(' ', $tableName);
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
         if (false === strpos($tableName, '`')) {
             if (strpos($tableName, '.')) {
                 $tableName = str_replace('.', '`.`', $tableName);
             }
             $tableName = '`' . $tableName . '`';
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
         $sql    = 'SHOW COLUMNS FROM ' . $tableName;
         $pdo    = $this->query($sql, [], false, true);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
         $info   = [];
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
         if ($result) {
             foreach ($result as $key => $val) {
                 $val                 = array_change_key_case($val);
                 $info[$val['field']] = [
                     'name'    => $val['field'],
                     'type'    => $val['type'],
+<<<<<<< HEAD
                     'notnull' => 'NO' == $val['null'],
                     'default' => $val['default'],
                     'primary' => strtolower($val['key']) == 'pri',
@@ -105,13 +132,26 @@ class Mysql extends Connection
             }
         }
 
+=======
+                    'notnull' => (bool) ('' === $val['null']), // not null is empty, null is yes
+                    'default' => $val['default'],
+                    'primary' => (strtolower($val['key']) == 'pri'),
+                    'autoinc' => (strtolower($val['extra']) == 'auto_increment'),
+                ];
+            }
+        }
+>>>>>>> main
         return $this->fieldCase($info);
     }
 
     /**
      * 取得数据库的表信息
      * @access public
+<<<<<<< HEAD
      * @param  string $dbName
+=======
+     * @param string $dbName
+>>>>>>> main
      * @return array
      */
     public function getTables($dbName = '')
@@ -120,22 +160,33 @@ class Mysql extends Connection
         $pdo    = $this->query($sql, [], false, true);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
         $info   = [];
+<<<<<<< HEAD
 
         foreach ($result as $key => $val) {
             $info[$key] = current($val);
         }
 
+=======
+        foreach ($result as $key => $val) {
+            $info[$key] = current($val);
+        }
+>>>>>>> main
         return $info;
     }
 
     /**
      * SQL性能分析
      * @access protected
+<<<<<<< HEAD
      * @param  string $sql
+=======
+     * @param string $sql
+>>>>>>> main
      * @return array
      */
     protected function getExplain($sql)
     {
+<<<<<<< HEAD
         $pdo = $this->linkID->prepare("EXPLAIN " . $this->queryStr);
 
         foreach ($this->bind as $key => $val) {
@@ -166,6 +217,16 @@ class Mysql extends Connection
             }
         }
 
+=======
+        $pdo    = $this->linkID->query("EXPLAIN " . $sql);
+        $result = $pdo->fetch(PDO::FETCH_ASSOC);
+        $result = array_change_key_case($result);
+        if (isset($result['extra'])) {
+            if (strpos($result['extra'], 'filesort') || strpos($result['extra'], 'temporary')) {
+                Log::record('SQL:' . $this->queryStr . '[' . $result['extra'] . ']', 'warn');
+            }
+        }
+>>>>>>> main
         return $result;
     }
 
@@ -174,6 +235,7 @@ class Mysql extends Connection
         return true;
     }
 
+<<<<<<< HEAD
     /**
      * 启动XA事务
      * @access public
@@ -226,4 +288,6 @@ class Mysql extends Connection
         $this->initConnect(true);
         $this->linkID->exec("XA ROLLBACK '$xid'");
     }
+=======
+>>>>>>> main
 }

@@ -12,7 +12,11 @@ class {%className%} extends Controller
      *
      * @return \think\Response
      */
+<<<<<<< HEAD
     public function index{%actionSuffix%}()
+=======
+    public function index()
+>>>>>>> main
     {
         //
     }
@@ -22,7 +26,11 @@ class {%className%} extends Controller
      *
      * @return \think\Response
      */
+<<<<<<< HEAD
     public function create{%actionSuffix%}()
+=======
+    public function create()
+>>>>>>> main
     {
         //
     }
@@ -33,7 +41,11 @@ class {%className%} extends Controller
      * @param  \think\Request  $request
      * @return \think\Response
      */
+<<<<<<< HEAD
     public function save{%actionSuffix%}(Request $request)
+=======
+    public function save(Request $request)
+>>>>>>> main
     {
         //
     }
@@ -44,7 +56,11 @@ class {%className%} extends Controller
      * @param  int  $id
      * @return \think\Response
      */
+<<<<<<< HEAD
     public function read{%actionSuffix%}($id)
+=======
+    public function read($id)
+>>>>>>> main
     {
         //
     }
@@ -55,7 +71,11 @@ class {%className%} extends Controller
      * @param  int  $id
      * @return \think\Response
      */
+<<<<<<< HEAD
     public function edit{%actionSuffix%}($id)
+=======
+    public function edit($id)
+>>>>>>> main
     {
         //
     }
@@ -67,7 +87,11 @@ class {%className%} extends Controller
      * @param  int  $id
      * @return \think\Response
      */
+<<<<<<< HEAD
     public function update{%actionSuffix%}(Request $request, $id)
+=======
+    public function update(Request $request, $id)
+>>>>>>> main
     {
         //
     }
@@ -78,7 +102,11 @@ class {%className%} extends Controller
      * @param  int  $id
      * @return \think\Response
      */
+<<<<<<< HEAD
     public function delete{%actionSuffix%}($id)
+=======
+    public function delete($id)
+>>>>>>> main
     {
         //
     }
