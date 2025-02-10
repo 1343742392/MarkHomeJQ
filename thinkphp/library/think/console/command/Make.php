@@ -11,28 +11,16 @@
 
 namespace think\console\command;
 
-<<<<<<< HEAD
-=======
-use think\App;
-use think\Config;
->>>>>>> main
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Argument;
 use think\console\Output;
-<<<<<<< HEAD
 use think\facade\App;
 use think\facade\Config;
 use think\facade\Env;
 
 abstract class Make extends Command
 {
-=======
-
-abstract class Make extends Command
-{
-
->>>>>>> main
     protected $type;
 
     abstract protected function getStub();
@@ -57,11 +45,7 @@ abstract class Make extends Command
         }
 
         if (!is_dir(dirname($pathname))) {
-<<<<<<< HEAD
             mkdir(dirname($pathname), 0755, true);
-=======
-            mkdir(strtolower(dirname($pathname)), 0755, true);
->>>>>>> main
         }
 
         file_put_contents($pathname, $this->buildClass($classname));
@@ -78,47 +62,26 @@ abstract class Make extends Command
 
         $class = str_replace($namespace . '\\', '', $name);
 
-<<<<<<< HEAD
         return str_replace(['{%className%}', '{%actionSuffix%}', '{%namespace%}', '{%app_namespace%}'], [
             $class,
             Config::get('action_suffix'),
             $namespace,
             App::getNamespace(),
         ], $stub);
-=======
-        return str_replace(['{%className%}', '{%namespace%}', '{%app_namespace%}'], [
-            $class,
-            $namespace,
-            App::$namespace,
-        ], $stub);
-
->>>>>>> main
     }
 
     protected function getPathName($name)
     {
-<<<<<<< HEAD
         $name = str_replace(App::getNamespace() . '\\', '', $name);
 
         return Env::get('app_path') . ltrim(str_replace('\\', '/', $name), '/') . '.php';
-=======
-        $name = str_replace(App::$namespace . '\\', '', $name);
-
-        return APP_PATH . str_replace('\\', '/', $name) . '.php';
->>>>>>> main
     }
 
     protected function getClassName($name)
     {
-<<<<<<< HEAD
         $appNamespace = App::getNamespace();
 
         if (strpos($name, $appNamespace . '\\') !== false) {
-=======
-        $appNamespace = App::$namespace;
-
-        if (strpos($name, $appNamespace . '\\') === 0) {
->>>>>>> main
             return $name;
         }
 

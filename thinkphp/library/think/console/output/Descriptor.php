@@ -69,11 +69,7 @@ class Descriptor
      * 描述参数
      * @param InputArgument $argument
      * @param array         $options
-<<<<<<< HEAD
      * @return string|mixed
-=======
-     * @return void
->>>>>>> main
      */
     protected function describeInputArgument(InputArgument $argument, array $options = [])
     {
@@ -97,11 +93,7 @@ class Descriptor
      * 描述选项
      * @param InputOption $option
      * @param array       $options
-<<<<<<< HEAD
      * @return string|mixed
-=======
-     * @return void
->>>>>>> main
      */
     protected function describeInputOption(InputOption $option, array $options = [])
     {
@@ -136,11 +128,7 @@ class Descriptor
      * 描述输入
      * @param InputDefinition $definition
      * @param array           $options
-<<<<<<< HEAD
      * @return string|mixed
-=======
-     * @return void
->>>>>>> main
      */
     protected function describeInputDefinition(InputDefinition $definition, array $options = [])
     {
@@ -185,11 +173,7 @@ class Descriptor
      * 描述指令
      * @param Command $command
      * @param array   $options
-<<<<<<< HEAD
      * @return string|mixed
-=======
-     * @return void
->>>>>>> main
      */
     protected function describeCommand(Command $command, array $options = [])
     {
@@ -224,11 +208,7 @@ class Descriptor
      * 描述控制台
      * @param Console $console
      * @param array   $options
-<<<<<<< HEAD
      * @return string|mixed
-=======
-     * @return void
->>>>>>> main
      */
     protected function describeConsole(Console $console, array $options = [])
     {

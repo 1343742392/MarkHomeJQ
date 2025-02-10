@@ -1,0 +1,239 @@
+/**************mian**************/
+
+
+html{
+    height: 100%;
+}
+body{
+    margin: 0px;
+    height: 100%;
+}
+
+#app{
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    background-color: rgb(221, 221, 221);
+    height: 100%;
+}
+
+.home-head{
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.home-page{
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    height: 100%;
+}
+
+.radius-card{
+    background-color: rgb(246, 246, 246);
+    border: 1px solid #ebeef5;
+    border-radius: 4px;
+}
+
+.select-folder{
+    display: flex;
+    width: 100%;
+}
+
+.click-pointer:hover{
+    cursor:pointer;
+}
+
+.center-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main{
+    width: 90%;
+    max-width: 400px;
+    /* width:min(90%, 400px) ; chrome70不支持*/
+    display: flex;
+    justify-content:flex-end;
+    flex-direction: column;
+    height: 100%;
+}
+
+
+.import-btn{
+    width: 100%;
+}
+
+.add-btn{
+    width: 100%;
+    margin-top: 10px !important;
+    margin-left: 0px !important;
+}
+
+
+.user-Page{
+
+
+}
+/******************longin***************/
+.longin{
+    padding: 20px;
+}
+
+/******************markbook*************/
+.mark-book{
+    margin-bottom: 20px;
+    height: 60%;
+    background-color: #eee;
+    background-color:#eee
+}
+
+.delete-file{
+    padding: 0.3rem !important;
+}
+
+.folder{
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.delete-folder{
+    padding: 0.3rem !important;
+}
+
+.delete-folder-i{
+    font-size:13px;
+}
+
+.hide-rollbar{
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
+}
+.hide-rollbar::-webkit-scrollbar{
+    display: none;
+}
+
+.check-div{
+    width: 25%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.checkbox{
+    height: 45%;
+    margin-right: 5px;
+}
+
+.mb-left{
+    width: 25%;
+
+    overflow-x: hidden;
+    height: 100%;
+
+    overflow-y: scroll;
+}
+
+.folders{
+    display: flex;
+    justify-content: flex-end;
+    justify-self: end;
+    flex-direction: column;
+}
+
+.mb-right{
+    width: 75%;
+    overflow-y: scroll;
+    background-color: #fff;
+    height: 100%;
+}
+
+.folder:hover{
+    color: rgb(123, 123, 123);
+}
+
+.folder-arrow{
+    margin-left: 3px;
+}
+
+.folder-arrow:hover{
+}
+
+
+.folder-name{
+    margin: 0px;
+    width: 75%;
+    white-space: nowrap;
+    text-align:center;
+    font-size: 1.0em;
+    overflow: hidden;
+}
+
+.files{
+    display: flex;
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* height: 1500px; */
+    /* margin-top: 100px; */
+}
+
+.file-row{
+    display: flex;
+    width: 100%;
+    height: 40px;
+}
+
+.item-right{
+    display: flex;
+    width: 55%;
+    margin-right: 4%;
+    justify-items: start;
+}
+
+.one-line{
+    overflow:hidden;
+    white-space: nowrap;
+    word-wrap: normal;
+    text-overflow: ellipsis;
+    word-break: keep-all;
+}
+
+.item-left{
+    padding-left: 20px;
+    display: flex;
+    justify-items: start;
+}
+
+.file-ico{
+    width: 20px;
+    height: 20px;
+}
+
+.file-name{
+    font-size: 0.8em;
+    color: rgb(80, 80, 80);
+    text-decoration:none;
+    margin-left: 10px;
+    margin-bottom: 0px;
+}
+
+/*******************bottom*********************/
+
+.home-bottom{
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.search-btn{
+    padding-top: 10px;
+}

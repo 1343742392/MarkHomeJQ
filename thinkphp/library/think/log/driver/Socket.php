@@ -30,11 +30,8 @@ class Socket
         'force_client_ids'    => [],
         // 限制允许读取日志的client_id
         'allow_client_ids'    => [],
-<<<<<<< HEAD
         //输出到浏览器默认展开的日志级别
         'expand_level'        => ['debug'],
-=======
->>>>>>> main
     ];
 
     protected $css = [
@@ -46,7 +43,6 @@ class Socket
     ];
 
     protected $allowForceClientIds = []; //配置强制推送且被授权的client_id
-<<<<<<< HEAD
     protected $app;
 
     /**
@@ -58,16 +54,6 @@ class Socket
     {
         $this->app = $app;
 
-=======
-
-    /**
-     * 构造函数
-     * @param array $config 缓存参数
-     * @access public
-     */
-    public function __construct(array $config = [])
-    {
->>>>>>> main
         if (!empty($config)) {
             $this->config = array_merge($this->config, $config);
         }
@@ -76,11 +62,7 @@ class Socket
     /**
      * 调试输出接口
      * @access public
-<<<<<<< HEAD
      * @param  array     $log 日志信息
-=======
-     * @param array     $log 日志信息
->>>>>>> main
      * @return bool
      */
     public function save(array $log = [], $append = false)
@@ -88,7 +70,6 @@ class Socket
         if (!$this->check()) {
             return false;
         }
-<<<<<<< HEAD
 
         $trace = [];
 
@@ -97,14 +78,6 @@ class Socket
             $reqs       = $runtime > 0 ? number_format(1 / $runtime, 2) : '∞';
             $time_str   = ' [运行时间：' . number_format($runtime, 6) . 's][吞吐率：' . $reqs . 'req/s]';
             $memory_use = number_format((memory_get_usage() - $this->app->getBeginMem()) / 1024, 2);
-=======
-        $trace = [];
-        if (App::$debug) {
-            $runtime    = round(microtime(true) - THINK_START_TIME, 10);
-            $reqs       = $runtime > 0 ? number_format(1 / $runtime, 2) : '∞';
-            $time_str   = ' [运行时间：' . number_format($runtime, 6) . 's][吞吐率：' . $reqs . 'req/s]';
-            $memory_use = number_format((memory_get_usage() - THINK_START_MEM) / 1024, 2);
->>>>>>> main
             $memory_str = ' [内存消耗：' . $memory_use . 'kb]';
             $file_load  = ' [文件加载：' . count(get_included_files()) . ']';
 
@@ -113,10 +86,7 @@ class Socket
             } else {
                 $current_uri = 'cmd:' . implode(' ', $_SERVER['argv']);
             }
-<<<<<<< HEAD
 
-=======
->>>>>>> main
             // 基本信息
             $trace[] = [
                 'type' => 'group',
@@ -127,18 +97,11 @@ class Socket
 
         foreach ($log as $type => $val) {
             $trace[] = [
-<<<<<<< HEAD
                 'type' => in_array($type, $this->config['expand_level']) ? 'group' : 'groupCollapsed',
                 'msg'  => '[ ' . $type . ' ]',
                 'css'  => isset($this->css[$type]) ? $this->css[$type] : '',
             ];
 
-=======
-                'type' => 'groupCollapsed',
-                'msg'  => '[ ' . $type . ' ]',
-                'css'  => isset($this->css[$type]) ? $this->css[$type] : '',
-            ];
->>>>>>> main
             foreach ($val as $msg) {
                 if (!is_string($msg)) {
                     $msg = var_export($msg, true);
@@ -149,10 +112,7 @@ class Socket
                     'css'  => '',
                 ];
             }
-<<<<<<< HEAD
 
-=======
->>>>>>> main
             $trace[] = [
                 'type' => 'groupEnd',
                 'msg'  => '',
@@ -166,19 +126,13 @@ class Socket
                 'msg'  => '[ file ]',
                 'css'  => '',
             ];
-<<<<<<< HEAD
 
-=======
->>>>>>> main
             $trace[] = [
                 'type' => 'log',
                 'msg'  => implode("\n", get_included_files()),
                 'css'  => '',
             ];
-<<<<<<< HEAD
 
-=======
->>>>>>> main
             $trace[] = [
                 'type' => 'groupEnd',
                 'msg'  => '',
@@ -193,10 +147,7 @@ class Socket
         ];
 
         $tabid = $this->getClientArg('tabid');
-<<<<<<< HEAD
 
-=======
->>>>>>> main
         if (!$client_id = $this->getClientArg('client_id')) {
             $client_id = '';
         }
@@ -210,29 +161,18 @@ class Socket
         } else {
             $this->sendToClient($tabid, $client_id, $trace, '');
         }
-<<<<<<< HEAD
 
-=======
->>>>>>> main
         return true;
     }
 
     /**
      * 发送给指定客户端
-<<<<<<< HEAD
      * @access protected
      * @author Zjmainstay
      * @param  $tabid
      * @param  $client_id
      * @param  $logs
      * @param  $force_client_id
-=======
-     * @author Zjmainstay
-     * @param $tabid
-     * @param $client_id
-     * @param $logs
-     * @param $force_client_id
->>>>>>> main
      */
     protected function sendToClient($tabid, $client_id, $logs, $force_client_id)
     {
@@ -242,38 +182,25 @@ class Socket
             'logs'            => $logs,
             'force_client_id' => $force_client_id,
         ];
-<<<<<<< HEAD
 
         $msg     = @json_encode($logs);
         $address = '/' . $client_id; //将client_id作为地址， server端通过地址判断将日志发布给谁
 
-=======
-        $msg     = @json_encode($logs);
-        $address = '/' . $client_id; //将client_id作为地址， server端通过地址判断将日志发布给谁
->>>>>>> main
         $this->send($this->config['host'], $msg, $address);
     }
 
     protected function check()
     {
         $tabid = $this->getClientArg('tabid');
-<<<<<<< HEAD
 
-=======
->>>>>>> main
         //是否记录日志的检查
         if (!$tabid && !$this->config['force_client_ids']) {
             return false;
         }
-<<<<<<< HEAD
 
         //用户认证
         $allow_client_ids = $this->config['allow_client_ids'];
 
-=======
-        //用户认证
-        $allow_client_ids = $this->config['allow_client_ids'];
->>>>>>> main
         if (!empty($allow_client_ids)) {
             //通过数组交集得出授权强制推送的client_id
             $this->allowForceClientIds = array_intersect($allow_client_ids, $this->config['force_client_ids']);
@@ -288,10 +215,7 @@ class Socket
         } else {
             $this->allowForceClientIds = $this->config['force_client_ids'];
         }
-<<<<<<< HEAD
 
-=======
->>>>>>> main
         return true;
     }
 
@@ -308,10 +232,7 @@ class Socket
         if (!isset($_SERVER[$key])) {
             return;
         }
-<<<<<<< HEAD
 
-=======
->>>>>>> main
         if (empty($args)) {
             if (!preg_match('/SocketLog\((.*?)\)/', $_SERVER[$key], $match)) {
                 $args = ['tabid' => null];
@@ -319,48 +240,32 @@ class Socket
             }
             parse_str($match[1], $args);
         }
-<<<<<<< HEAD
 
         if (isset($args[$name])) {
             return $args[$name];
         }
 
-=======
-        if (isset($args[$name])) {
-            return $args[$name];
-        }
->>>>>>> main
         return;
     }
 
     /**
-<<<<<<< HEAD
      * @access protected
      * @param  string $host - $host of socket server
      * @param  string $message - 发送的消息
      * @param  string $address - 地址
-=======
-     * @param string $host - $host of socket server
-     * @param string $message - 发送的消息
-     * @param string $address - 地址
->>>>>>> main
      * @return bool
      */
     protected function send($host, $message = '', $address = '/')
     {
         $url = 'http://' . $host . ':' . $this->port . $address;
         $ch  = curl_init();
-<<<<<<< HEAD
 
-=======
->>>>>>> main
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-<<<<<<< HEAD
 
         $headers = [
             "Content-Type: application/json;charset=UTF-8",
@@ -368,12 +273,6 @@ class Socket
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); //设置header
 
-=======
-        $headers = [
-            "Content-Type: application/json;charset=UTF-8",
-        ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); //设置header
->>>>>>> main
         return curl_exec($ch);
     }
 

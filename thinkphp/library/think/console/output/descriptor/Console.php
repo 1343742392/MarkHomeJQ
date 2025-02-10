@@ -104,13 +104,10 @@ class Console
 
             /** @var Command $command */
             foreach ($commands as $name => $command) {
-<<<<<<< HEAD
                 if (is_string($command)) {
                     $command = new $command();
                 }
 
-=======
->>>>>>> main
                 if (!$command->getName()) {
                     continue;
                 }

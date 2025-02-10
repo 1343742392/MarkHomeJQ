@@ -467,7 +467,6 @@ class Command
             throw new \InvalidArgumentException(sprintf('Command name "%s" is invalid.', $name));
         }
     }
-<<<<<<< HEAD
 
     /**
      * 输出表格
@@ -480,6 +479,4 @@ class Command
         $this->output->writeln($content);
         return $content;
     }
-=======
->>>>>>> main
 }

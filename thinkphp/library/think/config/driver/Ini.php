@@ -13,7 +13,6 @@ namespace think\config\driver;
 
 class Ini
 {
-<<<<<<< HEAD
     protected $config;
 
     public function __construct($config)
@@ -27,14 +26,6 @@ class Ini
             return parse_ini_file($this->config, true);
         } else {
             return parse_ini_string($this->config, true);
-=======
-    public function parse($config)
-    {
-        if (is_file($config)) {
-            return parse_ini_file($config, true);
-        } else {
-            return parse_ini_string($config, true);
->>>>>>> main
         }
     }
 }

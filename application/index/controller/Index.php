@@ -357,7 +357,7 @@ class Index extends Controller
 
             $mail->setFrom('', 'MarkBook');  //发件人
             $mail->addAddress($userEmail, '');  // 收件人
-            $mail->addReplyTo('hui@xwtool.top', 'info'); //回复的时候回复给哪个邮箱 建议和发件人一致
+            $mail->addReplyTo('', 'info'); //回复的时候回复给哪个邮箱 建议和发件人一致
 
             $mail->isHTML(true);                                  // 是否以HTML文档格式发送  发送后客户端可直接显示对应HTML内容
             $mail->Subject = 'MarkBook账号邮箱验证';

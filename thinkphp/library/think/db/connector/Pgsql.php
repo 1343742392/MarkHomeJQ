@@ -21,7 +21,6 @@ class Pgsql extends Connection
 {
     protected $builder = '\\think\\db\\builder\\Pgsql';
 
-<<<<<<< HEAD
     // PDO连接参数
     protected $params = [
         PDO::ATTR_CASE              => PDO::CASE_NATURAL,
@@ -34,57 +33,34 @@ class Pgsql extends Connection
      * 解析pdo连接的dsn信息
      * @access protected
      * @param  array $config 连接信息
-=======
-    /**
-     * 解析pdo连接的dsn信息
-     * @access protected
-     * @param array $config 连接信息
->>>>>>> main
      * @return string
      */
     protected function parseDsn($config)
     {
         $dsn = 'pgsql:dbname=' . $config['database'] . ';host=' . $config['hostname'];
-<<<<<<< HEAD
 
         if (!empty($config['hostport'])) {
             $dsn .= ';port=' . $config['hostport'];
         }
 
-=======
-        if (!empty($config['hostport'])) {
-            $dsn .= ';port=' . $config['hostport'];
-        }
->>>>>>> main
         return $dsn;
     }
 
     /**
      * 取得数据表的字段信息
      * @access public
-<<<<<<< HEAD
      * @param  string $tableName
-=======
-     * @param string $tableName
->>>>>>> main
      * @return array
      */
     public function getFields($tableName)
     {
-<<<<<<< HEAD
-=======
-
->>>>>>> main
         list($tableName) = explode(' ', $tableName);
         $sql             = 'select fields_name as "field",fields_type as "type",fields_not_null as "null",fields_key_name as "key",fields_default as "default",fields_default as "extra" from table_msg(\'' . $tableName . '\');';
 
         $pdo    = $this->query($sql, [], false, true);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
         $info   = [];
-<<<<<<< HEAD
 
-=======
->>>>>>> main
         if ($result) {
             foreach ($result as $key => $val) {
                 $val                 = array_change_key_case($val);
@@ -98,21 +74,14 @@ class Pgsql extends Connection
                 ];
             }
         }
-<<<<<<< HEAD
 
-=======
->>>>>>> main
         return $this->fieldCase($info);
     }
 
     /**
      * 取得数据库的表信息
      * @access public
-<<<<<<< HEAD
      * @param  string $dbName
-=======
-     * @param string $dbName
->>>>>>> main
      * @return array
      */
     public function getTables($dbName = '')
@@ -121,28 +90,18 @@ class Pgsql extends Connection
         $pdo    = $this->query($sql, [], false, true);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
         $info   = [];
-<<<<<<< HEAD
 
         foreach ($result as $key => $val) {
             $info[$key] = current($val);
         }
 
-=======
-        foreach ($result as $key => $val) {
-            $info[$key] = current($val);
-        }
->>>>>>> main
         return $info;
     }
 
     /**
      * SQL性能分析
      * @access protected
-<<<<<<< HEAD
      * @param  string $sql
-=======
-     * @param string $sql
->>>>>>> main
      * @return array
      */
     protected function getExplain($sql)

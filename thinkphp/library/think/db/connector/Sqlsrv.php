@@ -13,10 +13,7 @@ namespace think\db\connector;
 
 use PDO;
 use think\db\Connection;
-<<<<<<< HEAD
 use think\db\Query;
-=======
->>>>>>> main
 
 /**
  * Sqlsrv数据库驱动
@@ -27,7 +24,6 @@ class Sqlsrv extends Connection
     protected $params = [
         PDO::ATTR_CASE              => PDO::CASE_NATURAL,
         PDO::ATTR_ERRMODE           => PDO::ERRMODE_EXCEPTION,
-<<<<<<< HEAD
         PDO::ATTR_ORACLE_NULLS      => PDO::NULL_NATURAL,
         PDO::ATTR_STRINGIFY_FETCHES => false,
     ];
@@ -38,42 +34,23 @@ class Sqlsrv extends Connection
      * 解析pdo连接的dsn信息
      * @access protected
      * @param  array $config 连接信息
-=======
-        PDO::ATTR_STRINGIFY_FETCHES => false,
-    ];
-    protected $builder = '\\think\\db\\builder\\Sqlsrv';
-    /**
-     * 解析pdo连接的dsn信息
-     * @access protected
-     * @param array $config 连接信息
->>>>>>> main
      * @return string
      */
     protected function parseDsn($config)
     {
         $dsn = 'sqlsrv:Database=' . $config['database'] . ';Server=' . $config['hostname'];
-<<<<<<< HEAD
 
         if (!empty($config['hostport'])) {
             $dsn .= ',' . $config['hostport'];
         }
 
-=======
-        if (!empty($config['hostport'])) {
-            $dsn .= ',' . $config['hostport'];
-        }
->>>>>>> main
         return $dsn;
     }
 
     /**
      * 取得数据表的字段信息
      * @access public
-<<<<<<< HEAD
      * @param  string $tableName
-=======
-     * @param string $tableName
->>>>>>> main
      * @return array
      */
     public function getFields($tableName)
@@ -93,10 +70,7 @@ class Sqlsrv extends Connection
         $pdo    = $this->query($sql, [], false, true);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
         $info   = [];
-<<<<<<< HEAD
 
-=======
->>>>>>> main
         if ($result) {
             foreach ($result as $key => $val) {
                 $val                       = array_change_key_case($val);
@@ -110,7 +84,6 @@ class Sqlsrv extends Connection
                 ];
             }
         }
-<<<<<<< HEAD
 
         $sql = "SELECT column_name FROM information_schema.key_column_usage WHERE table_name='$tableName'";
 
@@ -128,29 +101,13 @@ class Sqlsrv extends Connection
             $info[$result['column_name']]['primary'] = true;
         }
 
-=======
-        $sql = "SELECT column_name FROM information_schema.key_column_usage WHERE table_name='$tableName'";
-        // 调试开始
-        $this->debug(true);
-        $pdo = $this->linkID->query($sql);
-        // 调试结束
-        $this->debug(false, $sql);
-        $result = $pdo->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
-            $info[$result['column_name']]['primary'] = true;
-        }
->>>>>>> main
         return $this->fieldCase($info);
     }
 
     /**
      * 取得数据表的字段信息
      * @access public
-<<<<<<< HEAD
      * @param  string $dbName
-=======
-     * @param string $dbName
->>>>>>> main
      * @return array
      */
     public function getTables($dbName = '')
@@ -163,22 +120,15 @@ class Sqlsrv extends Connection
         $pdo    = $this->query($sql, [], false, true);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
         $info   = [];
-<<<<<<< HEAD
 
         foreach ($result as $key => $val) {
             $info[$key] = current($val);
         }
 
-=======
-        foreach ($result as $key => $val) {
-            $info[$key] = current($val);
-        }
->>>>>>> main
         return $info;
     }
 
     /**
-<<<<<<< HEAD
      * 得到某个列的数组
      * @access public
      * @param  Query     $query 查询对象
@@ -276,11 +226,6 @@ class Sqlsrv extends Connection
      * SQL性能分析
      * @access protected
      * @param  string $sql
-=======
-     * SQL性能分析
-     * @access protected
-     * @param string $sql
->>>>>>> main
      * @return array
      */
     protected function getExplain($sql)

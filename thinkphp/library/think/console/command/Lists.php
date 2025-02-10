@@ -13,7 +13,6 @@ namespace think\console\command;
 
 use think\console\Command;
 use think\console\Input;
-<<<<<<< HEAD
 use think\console\input\Argument as InputArgument;
 use think\console\input\Definition as InputDefinition;
 use think\console\input\Option as InputOption;
@@ -21,16 +20,6 @@ use think\console\Output;
 
 class Lists extends Command
 {
-=======
-use think\console\Output;
-use think\console\input\Argument as InputArgument;
-use think\console\input\Option as InputOption;
-use think\console\input\Definition as InputDefinition;
-
-class Lists extends Command
-{
-
->>>>>>> main
     /**
      * {@inheritdoc}
      */
@@ -78,11 +67,7 @@ EOF
     {
         return new InputDefinition([
             new InputArgument('namespace', InputArgument::OPTIONAL, 'The namespace name'),
-<<<<<<< HEAD
             new InputOption('raw', null, InputOption::VALUE_NONE, 'To output raw command list'),
-=======
-            new InputOption('raw', null, InputOption::VALUE_NONE, 'To output raw command list')
->>>>>>> main
         ]);
     }
 }

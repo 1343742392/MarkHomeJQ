@@ -15,18 +15,11 @@ use think\console\Command;
 use think\console\Input;
 use think\console\input\Option;
 use think\console\Output;
-<<<<<<< HEAD
 use think\facade\App;
 use think\facade\Build as AppBuild;
 
 class Build extends Command
 {
-=======
-
-class Build extends Command
-{
-
->>>>>>> main
     /**
      * {@inheritdoc}
      */
@@ -43,11 +36,7 @@ class Build extends Command
     protected function execute(Input $input, Output $output)
     {
         if ($input->hasOption('module')) {
-<<<<<<< HEAD
             AppBuild::module($input->getOption('module'));
-=======
-            \think\Build::module($input->getOption('module'));
->>>>>>> main
             $output->writeln("Successed");
             return;
         }
@@ -55,24 +44,15 @@ class Build extends Command
         if ($input->hasOption('config')) {
             $build = include $input->getOption('config');
         } else {
-<<<<<<< HEAD
             $build = include App::getAppPath() . 'build.php';
         }
 
-=======
-            $build = include APP_PATH . 'build.php';
-        }
->>>>>>> main
         if (empty($build)) {
             $output->writeln("Build Config Is Empty");
             return;
         }
-<<<<<<< HEAD
 
         AppBuild::run($build);
-=======
-        \think\Build::run($build);
->>>>>>> main
         $output->writeln("Successed");
 
     }

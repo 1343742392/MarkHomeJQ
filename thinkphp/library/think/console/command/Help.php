@@ -19,10 +19,6 @@ use think\console\Output;
 
 class Help extends Command
 {
-<<<<<<< HEAD
-=======
-
->>>>>>> main
     private $command;
 
     /**

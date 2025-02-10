@@ -37,13 +37,10 @@ DECLARE
      v_sql varchar;
      v_rec RECORD;
      v_key varchar;
-<<<<<<< HEAD
      v_conkey smallint[];
      v_pk varchar[];
    v_len smallint;
    v_pos smallint := 1;
-=======
->>>>>>> main
 BEGIN
      SELECT
            pg_class.oid  INTO v_oid
@@ -56,7 +53,6 @@ BEGIN
          RETURN;
      END IF;
 
-<<<<<<< HEAD
      SELECT
          pg_constraint.conkey INTO v_conkey
      FROM
@@ -82,8 +78,6 @@ BEGIN
       v_pos := v_pos + 1;
      END LOOP;
 
-=======
->>>>>>> main
      v_sql='
      SELECT
            pg_attribute.attname AS fields_name,
@@ -118,7 +112,6 @@ BEGIN
          v_ret.fields_not_null=v_rec.fields_not_null;
          v_ret.fields_default=v_rec.fields_default;
          v_ret.fields_comment=v_rec.fields_comment;
-<<<<<<< HEAD
         
          v_ret.fields_key_name='';
      
@@ -132,14 +125,6 @@ BEGIN
        v_pos := v_pos + 1;
          END LOOP;        
 
-=======
-         SELECT constraint_name INTO v_key FROM information_schema.key_column_usage WHERE table_schema=a_schema_name AND table_name=a_table_name AND column_name=v_rec.fields_name;
-         IF FOUND THEN
-            v_ret.fields_key_name=v_key;
-         ELSE
-            v_ret.fields_key_name='';
-         END IF;
->>>>>>> main
          RETURN NEXT v_ret;
      END LOOP;
      RETURN ;
