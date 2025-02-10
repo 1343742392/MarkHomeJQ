@@ -467,4 +467,19 @@ class Command
             throw new \InvalidArgumentException(sprintf('Command name "%s" is invalid.', $name));
         }
     }
+<<<<<<< HEAD
+
+    /**
+     * 输出表格
+     * @param Table $table
+     * @return string
+     */
+    protected function table(Table $table)
+    {
+        $content = $table->render();
+        $this->output->writeln($content);
+        return $content;
+    }
+=======
+>>>>>>> main
 }

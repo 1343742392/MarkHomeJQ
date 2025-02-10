@@ -72,11 +72,35 @@ class Index
 
     public function DbTest()
     {
-        $startTime = microtime(true);
-        echo $startTime;
-        $userMarkBook = MarkBook::where('user', "1343742392@qq.com")->select();
-        dump(Tool::GetMarkBookFeature($userMarkBook));
-        dump(microtime(true) - $startTime);
+        // $userMarkBook = MarkBook::where('user', '3266873901@qq.com')->field('folder, i, name,url')->select();
+        // //return dump($userMarkBook);
+        // $thisFeature = Tool::GetMarkBookFeature($userMarkBook);
+        // echo $thisFeature;
+
+
+
+        // $oldFolder = '["哈","呵799"]';
+        // $newFolder = '["哈","呵"]';
+
+        // $oldFolder = substr($oldFolder, 0, -1) ;
+        // $newFolder = substr($newFolder, 0, -1) ;
+
+        // echo $newFolder.substr('["哈","呵799","1"]',strlen($oldFolder));
+
+
+
+        // $m = new MarkBook();
+        // $m->name = "ap";
+        // $m->user="";
+        // $m->url="";
+        // $m->folder=  addslashes('["\u54c8"]');
+        // $m->save();
+
+
+
+        // $s = substr('["哈","呵7"]',0,-1);
+        // $m = MarkBook::where('folder','like',$s.'%')->select();
+        // return dump($m);
     }
 
     public function GetSuffix()
@@ -84,4 +108,19 @@ class Index
         echo Tool::GetSuffix("https://spring.io//manifest-0e3065c2bbd1ef7a320e80861393f1a6.json");
         
     }
+
+    //切换MarkBook的folder 形式"文件夹" <==> ['文件夹']
+    // public function ChangeFolder()
+    // {
+    //     $allMarkBook = MarkBook::all();
+    //     foreach ($allMarkBook as $markBook) {
+    //         if(substr($markBook->folder,0,2) == '["' && substr($markBook->folder,-2) == '"]') {
+                
+    //         }else{
+    //             $markBook->folder = '["'.$markBook->folder.'"]';
+
+    //         }
+    //         $markBook->save();
+    //     }
+    // }
 }

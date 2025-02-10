@@ -68,9 +68,15 @@ class TagLib
     protected $comparison = [' nheq ' => ' !== ', ' heq ' => ' === ', ' neq ' => ' != ', ' eq ' => ' == ', ' egt ' => ' >= ', ' gt ' => ' > ', ' elt ' => ' <= ', ' lt ' => ' < '];
 
     /**
+<<<<<<< HEAD
+     * 架构函数
+     * @access public
+     * @param  \stdClass $template 模板引擎对象
+=======
      * 构造函数
      * @access public
      * @param \stdClass $template 模板引擎对象
+>>>>>>> main
      */
     public function __construct($template)
     {
@@ -88,6 +94,10 @@ class TagLib
     {
         $tags = [];
         $lib  = $lib ? strtolower($lib) . ':' : '';
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
         foreach ($this->tags as $name => $val) {
             $close                      = !isset($val['close']) || $val['close'] ? 1 : 0;
             $tags[$close][$lib . $name] = $name;
@@ -136,11 +146,22 @@ class TagLib
                     // 对应的标签名
                     $name  = $tags[1][$node['name']];
                     $alias = $lib . $name != $node['name'] ? ($lib ? strstr($node['name'], $lib) : $node['name']) : '';
+<<<<<<< HEAD
+
+                    // 解析标签属性
+                    $attrs  = $this->parseAttr($node['begin'][0], $name, $alias);
+                    $method = 'tag' . $name;
+
+                    // 读取标签库中对应的标签内容 replace[0]用来替换标签头，replace[1]用来替换标签尾
+                    $replace = explode($break, $this->$method($attrs, $break));
+
+=======
                     // 解析标签属性
                     $attrs  = $this->parseAttr($node['begin'][0], $name, $alias);
                     $method = 'tag' . $name;
                     // 读取标签库中对应的标签内容 replace[0]用来替换标签头，replace[1]用来替换标签尾
                     $replace = explode($break, $this->$method($attrs, $break));
+>>>>>>> main
                     if (count($replace) > 1) {
                         while ($beginArray) {
                             $begin = end($beginArray);
@@ -160,6 +181,10 @@ class TagLib
                         $beginArray[] = ['pos' => $node['begin'][1], 'len' => strlen($node['begin'][0]), 'str' => $replace[0]];
                     }
                 }
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
                 while ($beginArray) {
                     $begin = array_pop($beginArray);
                     // 替换标签头部
@@ -180,12 +205,20 @@ class TagLib
                 return $this->$method($attrs, '');
             }, $content);
         }
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
         return;
     }
 
     /**
      * 按标签生成正则
+<<<<<<< HEAD
+     * @access public
+=======
      * @access private
+>>>>>>> main
      * @param  array|string     $tags 标签名
      * @param  boolean          $close 是否为闭合标签
      * @return string
@@ -196,6 +229,10 @@ class TagLib
         $end     = $this->tpl->config('taglib_end');
         $single  = strlen(ltrim($begin, '\\')) == 1 && strlen(ltrim($end, '\\')) == 1 ? true : false;
         $tagName = is_array($tags) ? implode('|', $tags) : $tags;
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
         if ($single) {
             if ($close) {
                 // 如果是闭合标签
@@ -211,25 +248,43 @@ class TagLib
                 $regex = $begin . '(' . $tagName . ')\b(?>(?:(?!' . $end . ').)*)' . $end;
             }
         }
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
         return '/' . $regex . '/is';
     }
 
     /**
      * 分析标签属性 正则方式
      * @access public
+<<<<<<< HEAD
+     * @param  string $str 标签属性字符串
+     * @param  string $name 标签名
+     * @param  string $alias 别名
+=======
      * @param string $str 标签属性字符串
      * @param string $name 标签名
      * @param string $alias 别名
+>>>>>>> main
      * @return array
      */
     public function parseAttr($str, $name, $alias = '')
     {
         $regex  = '/\s+(?>(?P<name>[\w-]+)\s*)=(?>\s*)([\"\'])(?P<value>(?:(?!\\2).)*)\\2/is';
         $result = [];
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
         if (preg_match_all($regex, $str, $matches)) {
             foreach ($matches['name'] as $key => $val) {
                 $result[$val] = $matches['value'][$key];
             }
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
             if (!isset($this->tags[$name])) {
                 // 检测是否存在别名定义
                 foreach ($this->tags as $key => $val) {
@@ -251,6 +306,10 @@ class TagLib
                     $result[$type] = $alias;
                 }
             }
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
             if (!empty($tag['must'])) {
                 $must = explode(',', $tag['must']);
                 foreach ($must as $name) {
@@ -275,6 +334,10 @@ class TagLib
                 throw new Exception('tag error:' . $name);
             }
         }
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
         return $result;
     }
 
@@ -286,11 +349,21 @@ class TagLib
      */
     public function parseCondition($condition)
     {
+<<<<<<< HEAD
+        if (!strpos($condition, '::') && strpos($condition, ':')) {
+            $condition = ' ' . substr(strstr($condition, ':'), 1);
+        }
+
+        $condition = str_ireplace(array_keys($this->comparison), array_values($this->comparison), $condition);
+        $this->tpl->parseVar($condition);
+
+=======
         if (strpos($condition, ':')) {
             $condition = ' ' . substr(strstr($condition, ':'), 1);
         }
         $condition = str_ireplace(array_keys($this->comparison), array_values($this->comparison), $condition);
         $this->tpl->parseVar($condition);
+>>>>>>> main
         // $this->tpl->parseVarFunction($condition); // XXX: 此句能解析表达式中用|分隔的函数，但表达式中如果有|、||这样的逻辑运算就产生了歧异
         return $condition;
     }
@@ -298,12 +371,20 @@ class TagLib
     /**
      * 自动识别构建变量
      * @access public
+<<<<<<< HEAD
+     * @param  string    $name       变量描述
+=======
      * @param string $name 变量描述
+>>>>>>> main
      * @return string
      */
     public function autoBuildVar(&$name)
     {
         $flag = substr($name, 0, 1);
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
         if (':' == $flag) {
             // 以:开头为函数调用，解析前去掉:
             $name = substr($name, 1);
@@ -313,11 +394,22 @@ class TagLib
             if (defined($name)) {
                 return $name;
             }
+<<<<<<< HEAD
+
+            // 不以$开头并且也不是常量，自动补上$前缀
+            $name = '$' . $name;
+        }
+
+        $this->tpl->parseVar($name);
+        $this->tpl->parseVarFunction($name, false);
+
+=======
             // 不以$开头并且也不是常量，自动补上$前缀
             $name = '$' . $name;
         }
         $this->tpl->parseVar($name);
         $this->tpl->parseVarFunction($name);
+>>>>>>> main
         return $name;
     }
 
@@ -326,7 +418,10 @@ class TagLib
      * @access public
      * @return array
      */
+<<<<<<< HEAD
+=======
     // 获取标签定义
+>>>>>>> main
     public function getTags()
     {
         return $this->tags;

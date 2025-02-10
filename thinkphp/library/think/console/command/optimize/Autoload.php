@@ -10,6 +10,15 @@
 // +----------------------------------------------------------------------
 namespace think\console\command\optimize;
 
+<<<<<<< HEAD
+use think\console\Command;
+use think\console\Input;
+use think\console\Output;
+use think\Container;
+
+class Autoload extends Command
+{
+=======
 use think\App;
 use think\Config;
 use think\console\Command;
@@ -19,6 +28,7 @@ use think\console\Output;
 class Autoload extends Command
 {
 
+>>>>>>> main
     protected function configure()
     {
         $this->setName('optimize:autoload')
@@ -37,6 +47,16 @@ class Autoload extends Command
 return [
 
 EOF;
+<<<<<<< HEAD
+        $app              = Container::get('app');
+        $namespacesToScan = [
+            $app->getNamespace() . '\\' => realpath(rtrim($app->getAppPath())),
+            'think\\'                   => $app->getThinkPath() . 'library/think',
+            'traits\\'                  => $app->getThinkPath() . 'library/traits',
+            ''                          => realpath(rtrim($app->getRootPath() . 'extend')),
+        ];
+
+=======
 
         $namespacesToScan = [
             App::$namespace . '\\' => realpath(rtrim(APP_PATH)),
@@ -51,6 +71,7 @@ EOF;
             $namespacesToScan[$namespace . '\\'] = realpath($dir);
         }
 
+>>>>>>> main
         krsort($namespacesToScan);
         $classMap = [];
         foreach ($namespacesToScan as $namespace => $dir) {
@@ -59,7 +80,11 @@ EOF;
                 continue;
             }
 
+<<<<<<< HEAD
+            $namespaceFilter = '' === $namespace ? null : $namespace;
+=======
             $namespaceFilter = $namespace === '' ? null : $namespace;
+>>>>>>> main
             $classMap        = $this->addClassMapCode($dir, $namespaceFilter, $classMap);
         }
 
@@ -68,12 +93,21 @@ EOF;
             $classmapFile .= '    ' . var_export($class, true) . ' => ' . $code;
         }
         $classmapFile .= "];\n";
+<<<<<<< HEAD
+        $runtimePath = $app->getRuntimePath();
+        if (!is_dir($runtimePath)) {
+            @mkdir($runtimePath, 0755, true);
+        }
+
+        file_put_contents($runtimePath . 'classmap.php', $classmapFile);
+=======
 
         if (!is_dir(RUNTIME_PATH)) {
             @mkdir(RUNTIME_PATH, 0755, true);
         }
 
         file_put_contents(RUNTIME_PATH . 'classmap' . EXT, $classmapFile);
+>>>>>>> main
 
         $output->writeln('<info>Succeed!</info>');
     }
@@ -100,6 +134,31 @@ EOF;
 
     protected function getPathCode($path)
     {
+<<<<<<< HEAD
+        $baseDir    = '';
+        $app        = Container::get('app');
+        $appPath    = $this->normalizePath(realpath($app->getAppPath()));
+        $libPath    = $this->normalizePath(realpath($app->getThinkPath() . 'library'));
+        $extendPath = $this->normalizePath(realpath($app->getRootPath() . 'extend'));
+        $path       = $this->normalizePath($path);
+
+        if (strpos($path, $libPath . '/') === 0) {
+            $path    = substr($path, strlen($app->getThinkPath() . 'library'));
+            $baseDir = "'" . $libPath . "/'";
+        } elseif (strpos($path, $appPath . '/') === 0) {
+            $path    = substr($path, strlen($appPath) + 1);
+            $baseDir = "'" . $appPath . "/'";
+        } elseif (strpos($path, $extendPath . '/') === 0) {
+            $path    = substr($path, strlen($extendPath) + 1);
+            $baseDir = "'" . $extendPath . "/'";
+        }
+
+        if (false !== $path) {
+            $baseDir .= " . ";
+        }
+
+        return $baseDir . ((false !== $path) ? var_export($path, true) : "");
+=======
 
         $baseDir    = '';
         $libPath    = $this->normalizePath(realpath(LIB_PATH));
@@ -127,13 +186,17 @@ EOF;
         }
 
         return $baseDir . (($path !== false) ? var_export($path, true) : "");
+>>>>>>> main
     }
 
     protected function normalizePath($path)
     {
+<<<<<<< HEAD
+=======
         if ($path === false) {
             return;
         }
+>>>>>>> main
         $parts    = [];
         $path     = strtr($path, '\\', '/');
         $prefix   = '';
@@ -252,7 +315,11 @@ EOF;
         // strip leading non-php code if needed
         if (substr($contents, 0, 2) !== '<?') {
             $contents = preg_replace('{^.+?<\?}s', '<?', $contents, 1, $replacements);
+<<<<<<< HEAD
+            if (0 === $replacements) {
+=======
             if ($replacements === 0) {
+>>>>>>> main
                 return [];
             }
         }
@@ -279,9 +346,15 @@ EOF;
                 $namespace = str_replace([' ', "\t", "\r", "\n"], '', $matches['nsname'][$i]) . '\\';
             } else {
                 $name = $matches['name'][$i];
+<<<<<<< HEAD
+                if (':' === $name[0]) {
+                    $name = 'xhp' . substr(str_replace(['-', ':'], ['_', '__'], $name), 1);
+                } elseif ('enum' === $matches['type'][$i]) {
+=======
                 if ($name[0] === ':') {
                     $name = 'xhp' . substr(str_replace(['-', ':'], ['_', '__'], $name), 1);
                 } elseif ($matches['type'][$i] === 'enum') {
+>>>>>>> main
                     $name = rtrim($name, ':');
                 }
                 $classes[] = ltrim($namespace . $name, '\\');

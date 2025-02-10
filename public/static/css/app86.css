@@ -119,11 +119,17 @@ body{
     display: none;
 }
 
-.del-btn{
+.check-div{
     width: 25%;
-    height: 30px;
-    padding: 2px;
-    padding-top: 4px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.checkbox{
+    height: 45%;
+    margin-right: 5px;
 }
 
 .mb-left{
@@ -187,7 +193,7 @@ body{
     height: 40px;
 }
 
-.file-right{
+.item-right{
     display: flex;
     width: 55%;
     margin-right: 4%;
@@ -202,7 +208,7 @@ body{
     word-break: keep-all;
 }
 
-.file-left{
+.item-left{
     padding-left: 20px;
     display: flex;
     justify-items: start;

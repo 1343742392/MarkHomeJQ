@@ -6,19 +6,30 @@
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
+<<<<<<< HEAD
+// | Author: yunwuxin <448901948@qq.com>
+=======
 // | Author: liu21st <liu21st@gmail.com>
+>>>>>>> main
 // +----------------------------------------------------------------------
 namespace think\console\command\optimize;
 
 use think\console\Command;
 use think\console\Input;
 use think\console\Output;
+<<<<<<< HEAD
+use think\Container;
+
+class Route extends Command
+{
+=======
 
 class Route extends Command
 {
     /** @var  Output */
     protected $output;
 
+>>>>>>> main
     protected function configure()
     {
         $this->setName('optimize:route')
@@ -27,17 +38,55 @@ class Route extends Command
 
     protected function execute(Input $input, Output $output)
     {
+<<<<<<< HEAD
+        $filename = Container::get('app')->getRuntimePath() . 'route.php';
+        if (is_file($filename)) {
+            unlink($filename);
+        }
+        file_put_contents($filename, $this->buildRouteCache());
+=======
 
         if (!is_dir(RUNTIME_PATH)) {
             @mkdir(RUNTIME_PATH, 0755, true);
         }
 
         file_put_contents(RUNTIME_PATH . 'route.php', $this->buildRouteCache());
+>>>>>>> main
         $output->writeln('<info>Succeed!</info>');
     }
 
     protected function buildRouteCache()
     {
+<<<<<<< HEAD
+        Container::get('route')->setName([]);
+        Container::get('route')->setTestMode(true);
+        // 路由检测
+        $path = Container::get('app')->getRoutePath();
+
+        $files = is_dir($path) ? scandir($path) : [];
+
+        foreach ($files as $file) {
+            if (strpos($file, '.php')) {
+                $filename = $path . DIRECTORY_SEPARATOR . $file;
+                // 导入路由配置
+                $rules = include $filename;
+                if (is_array($rules)) {
+                    Container::get('route')->import($rules);
+                }
+            }
+        }
+
+        if (Container::get('config')->get('route_annotation')) {
+            $suffix = Container::get('config')->get('controller_suffix') || Container::get('config')->get('class_suffix');
+            include Container::get('build')->buildRoute($suffix);
+        }
+
+        $content = '<?php ' . PHP_EOL . 'return ';
+        $content .= var_export(Container::get('route')->getName(), true) . ';';
+        return $content;
+    }
+
+=======
         $files = \think\Config::get('route_config_file');
         foreach ($files as $file) {
             if (is_file(CONF_PATH . $file . CONF_EXT)) {
@@ -72,4 +121,5 @@ class Route extends Command
             $value = '[__start__' . substr($content, $start, $end - $start + 1) . '__end__]';
         }
     }
+>>>>>>> main
 }

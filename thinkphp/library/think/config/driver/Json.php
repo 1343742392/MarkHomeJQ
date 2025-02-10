@@ -13,12 +13,28 @@ namespace think\config\driver;
 
 class Json
 {
+<<<<<<< HEAD
+    protected $config;
+
+    public function __construct($config)
+=======
     public function parse($config)
+>>>>>>> main
     {
         if (is_file($config)) {
             $config = file_get_contents($config);
         }
+<<<<<<< HEAD
+
+        $this->config = $config;
+    }
+
+    public function parse()
+    {
+        return json_decode($this->config, true);
+=======
         $result = json_decode($config, true);
         return $result;
+>>>>>>> main
     }
 }

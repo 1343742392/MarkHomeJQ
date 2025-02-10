@@ -15,6 +15,117 @@ use think\exception\ClassNotFoundException;
 
 class Session
 {
+<<<<<<< HEAD
+    /**
+     * 配置参数
+     * @var array
+     */
+    protected $config = [];
+
+    /**
+     * 前缀
+     * @var string
+     */
+    protected $prefix = '';
+
+    /**
+     * 是否初始化
+     * @var bool
+     */
+    protected $init = null;
+
+    /**
+     * 锁驱动
+     * @var object
+     */
+    protected $lockDriver = null;
+
+    /**
+     * 锁key
+     * @var string
+     */
+    protected $sessKey = 'PHPSESSID';
+
+    /**
+     * 锁超时时间
+     * @var integer
+     */
+    protected $lockTimeout = 3;
+
+    /**
+     * 是否启用锁机制
+     * @var bool
+     */
+    protected $lock = false;
+
+    public function __construct(array $config = [])
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * 设置或者获取session作用域（前缀）
+     * @access public
+     * @param  string $prefix
+     * @return string|void
+     */
+    public function prefix($prefix = '')
+    {
+        empty($this->init) && $this->boot();
+
+        if (empty($prefix) && null !== $prefix) {
+            return $this->prefix;
+        } else {
+            $this->prefix = $prefix;
+        }
+    }
+
+    public static function __make(Config $config)
+    {
+        return new static($config->pull('session'));
+    }
+
+    /**
+     * 配置
+     * @access public
+     * @param  array $config
+     * @return void
+     */
+    public function setConfig(array $config = [])
+    {
+        $this->config = array_merge($this->config, array_change_key_case($config));
+
+        if (isset($config['prefix'])) {
+            $this->prefix = $config['prefix'];
+        }
+
+        if (isset($config['use_lock'])) {
+            $this->lock = $config['use_lock'];
+        }
+    }
+
+    /**
+     * 设置已经初始化
+     * @access public
+     * @return void
+     */
+    public function inited()
+    {
+        $this->init = true;
+    }
+
+    /**
+     * session初始化
+     * @access public
+     * @param  array $config
+     * @return void
+     * @throws \think\Exception
+     */
+    public function init(array $config = [])
+    {
+        $config = $config ?: $this->config;
+
+=======
     protected static $prefix = '';
     protected static $init   = null;
 
@@ -46,6 +157,7 @@ class Session
         }
         // 记录初始化信息
         App::$debug && Log::record('[ SESSION ] INIT ' . var_export($config, true), 'info');
+>>>>>>> main
         $isDoStart = false;
         if (isset($config['use_trans_sid'])) {
             ini_set('session.use_trans_sid', $config['use_trans_sid'] ? 1 : 0);
@@ -57,14 +169,40 @@ class Session
             $isDoStart = true;
         }
 
+<<<<<<< HEAD
+        if (isset($config['prefix'])) {
+            $this->prefix = $config['prefix'];
+        }
+
+        if (isset($config['use_lock'])) {
+            $this->lock = $config['use_lock'];
+        }
+
+=======
         if (isset($config['prefix']) && ('' === self::$prefix || null === self::$prefix)) {
             self::$prefix = $config['prefix'];
         }
+>>>>>>> main
         if (isset($config['var_session_id']) && isset($_REQUEST[$config['var_session_id']])) {
             session_id($_REQUEST[$config['var_session_id']]);
         } elseif (isset($config['id']) && !empty($config['id'])) {
             session_id($config['id']);
         }
+<<<<<<< HEAD
+
+        if (isset($config['name'])) {
+            session_name($config['name']);
+        }
+
+        if (isset($config['path'])) {
+            session_save_path($config['path']);
+        }
+
+        if (isset($config['domain'])) {
+            ini_set('session.cookie_domain', $config['domain']);
+        }
+
+=======
         if (isset($config['name'])) {
             session_name($config['name']);
         }
@@ -74,10 +212,34 @@ class Session
         if (isset($config['domain'])) {
             ini_set('session.cookie_domain', $config['domain']);
         }
+>>>>>>> main
         if (isset($config['expire'])) {
             ini_set('session.gc_maxlifetime', $config['expire']);
             ini_set('session.cookie_lifetime', $config['expire']);
         }
+<<<<<<< HEAD
+
+        if (isset($config['secure'])) {
+            ini_set('session.cookie_secure', $config['secure']);
+        }
+
+        if (isset($config['httponly'])) {
+            ini_set('session.cookie_httponly', $config['httponly']);
+        }
+
+        if (isset($config['use_cookies'])) {
+            ini_set('session.use_cookies', $config['use_cookies'] ? 1 : 0);
+        }
+
+        if (isset($config['cache_limiter'])) {
+            session_cache_limiter($config['cache_limiter']);
+        }
+
+        if (isset($config['cache_expire'])) {
+            session_cache_expire($config['cache_expire']);
+        }
+
+=======
         if (isset($config['secure'])) {
             ini_set('session.cookie_secure', $config['secure']);
         }
@@ -93,6 +255,7 @@ class Session
         if (isset($config['cache_expire'])) {
             session_cache_expire($config['cache_expire']);
         }
+>>>>>>> main
         if (!empty($config['type'])) {
             // 读取session驱动
             $class = false !== strpos($config['type'], '\\') ? $config['type'] : '\\think\\session\\driver\\' . ucwords($config['type']);
@@ -102,16 +265,43 @@ class Session
                 throw new ClassNotFoundException('error session handler:' . $class, $class);
             }
         }
+<<<<<<< HEAD
+
+        if ($isDoStart) {
+            $this->start();
+        } else {
+            $this->init = false;
+        }
+
+        return $this;
+=======
         if ($isDoStart) {
             session_start();
             self::$init = true;
         } else {
             self::$init = false;
         }
+>>>>>>> main
     }
 
     /**
      * session自动启动或者初始化
+<<<<<<< HEAD
+     * @access public
+     * @return void
+     */
+    public function boot()
+    {
+        if (is_null($this->init)) {
+            $this->init();
+        }
+
+        if (false === $this->init) {
+            if (PHP_SESSION_ACTIVE != session_status()) {
+                $this->start();
+            }
+            $this->init = true;
+=======
      * @return void
      */
     public static function boot()
@@ -123,11 +313,28 @@ class Session
                 session_start();
             }
             self::$init = true;
+>>>>>>> main
         }
     }
 
     /**
      * session设置
+<<<<<<< HEAD
+     * @access public
+     * @param  string        $name session名称
+     * @param  mixed         $value session值
+     * @param  string|null   $prefix 作用域（前缀）
+     * @return void
+     */
+    public function set($name, $value, $prefix = null)
+    {
+        $this->lock();
+
+        empty($this->init) && $this->boot();
+
+        $prefix = !is_null($prefix) ? $prefix : $this->prefix;
+
+=======
      * @param string        $name session名称
      * @param mixed         $value session值
      * @param string|null   $prefix 作用域（前缀）
@@ -138,6 +345,7 @@ class Session
         empty(self::$init) && self::boot();
 
         $prefix = !is_null($prefix) ? $prefix : self::$prefix;
+>>>>>>> main
         if (strpos($name, '.')) {
             // 二维数组赋值
             list($name1, $name2) = explode('.', $name);
@@ -151,10 +359,47 @@ class Session
         } else {
             $_SESSION[$name] = $value;
         }
+<<<<<<< HEAD
+
+        $this->unlock();
+=======
+>>>>>>> main
     }
 
     /**
      * session获取
+<<<<<<< HEAD
+     * @access public
+     * @param  string        $name session名称
+     * @param  string|null   $prefix 作用域（前缀）
+     * @return mixed
+     */
+    public function get($name = '', $prefix = null)
+    {
+        $this->lock();
+
+        empty($this->init) && $this->boot();
+
+        $prefix = !is_null($prefix) ? $prefix : $this->prefix;
+
+        $value = $prefix ? (!empty($_SESSION[$prefix]) ? $_SESSION[$prefix] : []) : $_SESSION;
+
+        if ('' != $name) {
+            $name = explode('.', $name);
+
+            foreach ($name as $val) {
+                if (isset($value[$val])) {
+                    $value = $value[$val];
+                } else {
+                    $value = null;
+                    break;
+                }
+            }
+        }
+
+        $this->unlock();
+
+=======
      * @param string        $name session名称
      * @param string|null   $prefix 作用域（前缀）
      * @return mixed
@@ -182,10 +427,97 @@ class Session
                 $value = isset($_SESSION[$name]) ? $_SESSION[$name] : null;
             }
         }
+>>>>>>> main
         return $value;
     }
 
     /**
+<<<<<<< HEAD
+     * session 读写锁驱动实例化
+     */
+    protected function initDriver()
+    {
+        $config = $this->config;
+
+        if (!empty($config['type']) && isset($config['use_lock']) && $config['use_lock']) {
+            // 读取session驱动
+            $class = false !== strpos($config['type'], '\\') ? $config['type'] : '\\think\\session\\driver\\' . ucwords($config['type']);
+
+            // 检查驱动类及类中是否存在 lock 和 unlock 函数
+            if (class_exists($class) && method_exists($class, 'lock') && method_exists($class, 'unlock')) {
+                $this->lockDriver = new $class($config);
+            }
+        }
+
+        // 通过cookie获得session_id
+        if (isset($config['name']) && $config['name']) {
+            $this->sessKey = $config['name'];
+        }
+
+        if (isset($config['lock_timeout']) && $config['lock_timeout'] > 0) {
+            $this->lockTimeout = $config['lock_timeout'];
+        }
+    }
+
+    /**
+     * session 读写加锁
+     * @access protected
+     * @return void
+     */
+    protected function lock()
+    {
+        if (empty($this->lock)) {
+            return;
+        }
+
+        $this->initDriver();
+
+        if (null !== $this->lockDriver && method_exists($this->lockDriver, 'lock')) {
+            $t = time();
+            // 使用 session_id 作为互斥条件，即只对同一 session_id 的会话互斥。第一次请求没有 session_id
+            $sessID = isset($_COOKIE[$this->sessKey]) ? $_COOKIE[$this->sessKey] : '';
+
+            do {
+                if (time() - $t > $this->lockTimeout) {
+                    $this->unlock();
+                }
+            } while (!$this->lockDriver->lock($sessID, $this->lockTimeout));
+        }
+    }
+
+    /**
+     * session 读写解锁
+     * @access protected
+     * @return void
+     */
+    protected function unlock()
+    {
+        if (empty($this->lock)) {
+            return;
+        }
+
+        $this->pause();
+
+        if ($this->lockDriver && method_exists($this->lockDriver, 'unlock')) {
+            $sessID = isset($_COOKIE[$this->sessKey]) ? $_COOKIE[$this->sessKey] : '';
+            $this->lockDriver->unlock($sessID);
+        }
+    }
+
+    /**
+     * session获取并删除
+     * @access public
+     * @param  string        $name session名称
+     * @param  string|null   $prefix 作用域（前缀）
+     * @return mixed
+     */
+    public function pull($name, $prefix = null)
+    {
+        $result = $this->get($name, $prefix);
+
+        if ($result) {
+            $this->delete($name, $prefix);
+=======
      * session获取并删除
      * @param string        $name session名称
      * @param string|null   $prefix 作用域（前缀）
@@ -196,6 +528,7 @@ class Session
         $result = self::get($name, $prefix);
         if ($result) {
             self::delete($name, $prefix);
+>>>>>>> main
             return $result;
         } else {
             return;
@@ -204,6 +537,23 @@ class Session
 
     /**
      * session设置 下一次请求有效
+<<<<<<< HEAD
+     * @access public
+     * @param  string        $name session名称
+     * @param  mixed         $value session值
+     * @param  string|null   $prefix 作用域（前缀）
+     * @return void
+     */
+    public function flash($name, $value)
+    {
+        $this->set($name, $value);
+
+        if (!$this->has('__flash__.__time__')) {
+            $this->set('__flash__.__time__', $_SERVER['REQUEST_TIME_FLOAT']);
+        }
+
+        $this->push('__flash__', $name);
+=======
      * @param string        $name session名称
      * @param mixed         $value session值
      * @param string|null   $prefix 作用域（前缀）
@@ -216,10 +566,31 @@ class Session
             self::set('__flash__.__time__', $_SERVER['REQUEST_TIME_FLOAT']);
         }
         self::push('__flash__', $name);
+>>>>>>> main
     }
 
     /**
      * 清空当前请求的session数据
+<<<<<<< HEAD
+     * @access public
+     * @return void
+     */
+    public function flush()
+    {
+        if (!$this->init) {
+            return;
+        }
+
+        $item = $this->get('__flash__');
+
+        if (!empty($item)) {
+            $time = $item['__time__'];
+
+            if ($_SERVER['REQUEST_TIME_FLOAT'] > $time) {
+                unset($item['__time__']);
+                $this->delete($item);
+                $this->set('__flash__', []);
+=======
      * @return void
      */
     public static function flush()
@@ -234,12 +605,29 @@ class Session
                     self::delete($item);
                     self::set('__flash__', []);
                 }
+>>>>>>> main
             }
         }
     }
 
     /**
      * 删除session数据
+<<<<<<< HEAD
+     * @access public
+     * @param  string|array  $name session名称
+     * @param  string|null   $prefix 作用域（前缀）
+     * @return void
+     */
+    public function delete($name, $prefix = null)
+    {
+        empty($this->init) && $this->boot();
+
+        $prefix = !is_null($prefix) ? $prefix : $this->prefix;
+
+        if (is_array($name)) {
+            foreach ($name as $key) {
+                $this->delete($key, $prefix);
+=======
      * @param string|array  $name session名称
      * @param string|null   $prefix 作用域（前缀）
      * @return void
@@ -251,6 +639,7 @@ class Session
         if (is_array($name)) {
             foreach ($name as $key) {
                 self::delete($key, $prefix);
+>>>>>>> main
             }
         } elseif (strpos($name, '.')) {
             list($name1, $name2) = explode('.', $name);
@@ -270,6 +659,17 @@ class Session
 
     /**
      * 清空session数据
+<<<<<<< HEAD
+     * @access public
+     * @param  string|null   $prefix 作用域（前缀）
+     * @return void
+     */
+    public function clear($prefix = null)
+    {
+        empty($this->init) && $this->boot();
+        $prefix = !is_null($prefix) ? $prefix : $this->prefix;
+
+=======
      * @param string|null   $prefix 作用域（前缀）
      * @return void
      */
@@ -277,6 +677,7 @@ class Session
     {
         empty(self::$init) && self::boot();
         $prefix = !is_null($prefix) ? $prefix : self::$prefix;
+>>>>>>> main
         if ($prefix) {
             unset($_SESSION[$prefix]);
         } else {
@@ -286,6 +687,31 @@ class Session
 
     /**
      * 判断session数据
+<<<<<<< HEAD
+     * @access public
+     * @param  string        $name session名称
+     * @param  string|null   $prefix
+     * @return bool
+     */
+    public function has($name, $prefix = null)
+    {
+        empty($this->init) && $this->boot();
+
+        $prefix = !is_null($prefix) ? $prefix : $this->prefix;
+        $value  = $prefix ? (!empty($_SESSION[$prefix]) ? $_SESSION[$prefix] : []) : $_SESSION;
+
+        $name = explode('.', $name);
+
+        foreach ($name as $val) {
+            if (!isset($value[$val])) {
+                return false;
+            } else {
+                $value = $value[$val];
+            }
+        }
+
+        return true;
+=======
      * @param string        $name session名称
      * @param string|null   $prefix
      * @return bool
@@ -301,14 +727,32 @@ class Session
         } else {
             return $prefix ? isset($_SESSION[$prefix][$name]) : isset($_SESSION[$name]);
         }
+>>>>>>> main
     }
 
     /**
      * 添加数据到一个session数组
+<<<<<<< HEAD
+     * @access public
+=======
+>>>>>>> main
      * @param  string  $key
      * @param  mixed   $value
      * @return void
      */
+<<<<<<< HEAD
+    public function push($key, $value)
+    {
+        $array = $this->get($key);
+
+        if (is_null($array)) {
+            $array = [];
+        }
+
+        $array[] = $value;
+
+        $this->set($key, $array);
+=======
     public static function push($key, $value)
     {
         $array = self::get($key);
@@ -317,44 +761,90 @@ class Session
         }
         $array[] = $value;
         self::set($key, $array);
+>>>>>>> main
     }
 
     /**
      * 启动session
+<<<<<<< HEAD
+     * @access public
+     * @return void
+     */
+    public function start()
+    {
+        session_start();
+
+        $this->init = true;
+=======
      * @return void
      */
     public static function start()
     {
         session_start();
         self::$init = true;
+>>>>>>> main
     }
 
     /**
      * 销毁session
+<<<<<<< HEAD
+     * @access public
+     * @return void
+     */
+    public function destroy()
+=======
      * @return void
      */
     public static function destroy()
+>>>>>>> main
     {
         if (!empty($_SESSION)) {
             $_SESSION = [];
         }
+<<<<<<< HEAD
+
+        session_unset();
+        session_destroy();
+
+        $this->init       = null;
+        $this->lockDriver = null;
+=======
         session_unset();
         session_destroy();
         self::$init = null;
+>>>>>>> main
     }
 
     /**
      * 重新生成session_id
+<<<<<<< HEAD
+     * @access public
+     * @param  bool $delete 是否删除关联会话文件
+     * @return void
+     */
+    public function regenerate($delete = false)
+=======
      * @param bool $delete 是否删除关联会话文件
      * @return void
      */
     public static function regenerate($delete = false)
+>>>>>>> main
     {
         session_regenerate_id($delete);
     }
 
     /**
      * 暂停session
+<<<<<<< HEAD
+     * @access public
+     * @return void
+     */
+    public function pause()
+    {
+        // 暂停session
+        session_write_close();
+        $this->init = false;
+=======
      * @return void
      */
     public static function pause()
@@ -362,5 +852,6 @@ class Session
         // 暂停session
         session_write_close();
         self::$init = false;
+>>>>>>> main
     }
 }

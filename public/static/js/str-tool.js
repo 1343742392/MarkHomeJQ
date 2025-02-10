@@ -19,4 +19,6 @@ function strSize(str, charset) {
     }
     return total;
 }
+
+
 export {strSize};

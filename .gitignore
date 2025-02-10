@@ -1,5 +1,9 @@
 .idea
 composer.lock
 *.log
+<<<<<<< HEAD
+测试
+=======
 
+>>>>>>> main
 测试

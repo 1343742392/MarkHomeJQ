@@ -26,7 +26,11 @@ class Model extends Make
 
     protected function getStub()
     {
+<<<<<<< HEAD
+        return __DIR__ . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'model.stub';
+=======
         return __DIR__ . '/stubs/model.stub';
+>>>>>>> main
     }
 
     protected function getNamespace($appNamespace, $module)
