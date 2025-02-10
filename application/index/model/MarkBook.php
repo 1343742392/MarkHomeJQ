@@ -4,9 +4,9 @@ use think\Model;
 class MarkBook extends Model
 {
     protected $table = 'mark_book';
-    protected $type = [
-        'create_time'      =>  'integer',
-    ];
-
-
+    // protected $type = [
+    //     'create_time'      =>  'integer',
+    // ];
+    protected $autoWriteTimestamp = true;
+    protected $pk = 'i';
 }

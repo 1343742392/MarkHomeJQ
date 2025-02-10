@@ -61,7 +61,7 @@ class Tool{
     {
         //根据i排序
         usort($markBooks,function($a,$b){
-            return $a->i - $b->i;
+            return $a['i'] - $b['i'];
         });
         $thisFeature = ""; 
 

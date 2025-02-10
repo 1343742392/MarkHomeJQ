@@ -3,18 +3,19 @@ namespace app\index\controller;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use think\Cache;
+use Cache;
 use think\Request;
+use Db;
 use think\Controller;
 use app\index\model\User;
-use think\Cookie;
+use Cookie;
 use app\index\model\MarkBook;
 use app\index\model\Visit;
 use app\Tool;
-use think\Validate;
-use think\Log;
+use Validate;
+use Log;
 use app\index\model\Error;
-use think\Config;
+use Config;
 
 class Index extends Controller
 {
@@ -36,6 +37,20 @@ class Index extends Controller
 
     public function sync(Request $request)
     {
+        $validate = Validate::make([
+            'mail'  => 'require|max:100',
+            'token'  => 'require|max:100',
+            'feature' => 'require|max:1000'
+        ],
+        [
+            "token.require" => "未登录",
+            "feature.require" => "没有特征"
+        ]);
+        if (!$validate->check($request->post())) {
+            return json_encode(array("code"=>401,"data"=>$validate->getError()));
+        }
+
+
         //验证
         $mail = $request->post('mail');
         $token = $request->post('token');
@@ -51,7 +66,7 @@ class Index extends Controller
         }
 
         //获取数据库用户特征
-        $userMarkBook = MarkBook::where('user', $mail)->select();
+        $userMarkBook = MarkBook::where('user', $mail)->field('name, url, i, folder')->select();
         $thisFeature = Tool::GetMarkBookFeature($userMarkBook);
         //比较
         if($thisFeature == $feature)
@@ -84,7 +99,7 @@ class Index extends Controller
             return json_encode(array("code"=>401,"data"=>"不存在该用户"));
         }
 
-        $files = json_decode( $request->post('files'),true);
+        $files =  json_decode( $request->post('files'),true);
         for($i = 0; $i < count($files); $i ++)
         {
             $ico = "";//Tool::GetIcoUrl($files[$i]['url']);
@@ -96,49 +111,16 @@ class Index extends Controller
             $markbook->name = mb_strlen($name, 'utf8') > 100 ?mb_substr($name, 0, 50, 'utf8') : $name;
             $url = $files[$i]['url'];
             $markbook->url = mb_strlen($url, 'utf8') > 2000 ? mb_substr($url, 0, 1000, 'utf8') : $url;
-            $folders = $files[$i]['folder'];
-            $markbook->folder = mb_strlen($folders, 'utf8') > 100 ? mb_substr($folders, 0, 50, 'utf8'): $folders;
+            $folders = json_encode($files[$i]['folder'], JSON_UNESCAPED_UNICODE);
+            if(mb_strlen($folders, 'utf8') < 1000)
+                $markbook->folder =    $folders;
+            else
+                $markbook->folder=  '["name too long"]';
             $markbook->ico = mb_strlen($ico, 'utf8') > 300 ? substr($ico, 0, 150) : $ico;
             $markbook->save();
             $files[$i] = $markbook;
         }
         return json_encode(array("code"=>200, 'data'=>$files));
-    }
-
-    public function addMarkBook(Request $request)
-    {
-        $url = $request->post('url');
-        $name = $request->post('name');
-        $folder = $request->post('folder');
-        $token = $request->post("token");
-        if(!$url || !$name || !$folder || !$token)
-        {
-            return json_encode(array("code"=>401,"data"=>"无参数"));
-        }
-
-        $user = User::get(["pw"=>$token]);
-        if(!$user)
-        {
-            return json_encode(array("code"=>401,"data"=>"不存在该用户"));
-        }
-
-        $ico = "";//Tool::GetIcoUrl($url);
-        if(!$ico) $ico = "";
-
-        $markbook = new MarkBook();
-        $markbook->user = $user->mail;
-        $markbook->name = $name;
-        $markbook->url = $url;
-        $markbook->folder = $folder;
-        $markbook->ico = $ico;
-        $markbook->save();
-
-
-        
-        return json_encode(
-            array("code"=>200,
-            "data"=>$markbook
-        ));
     }
 
     public function editFile(Request $request)
@@ -171,6 +153,7 @@ class Index extends Controller
 
         MarkBook::where(['i'=> $request->post('id')])
         ->update(['name'=> $request->post('name'), 'url'=>$request->post('url')]);
+
         return json_encode(array("code"=>200));
     }
 
@@ -179,14 +162,14 @@ class Index extends Controller
         $validate = Validate::make([
             'token'  => 'require|max:100',
             'mail' =>'require|max:100',
-            'fromName' => 'require|max:100',
-            'toName' => 'require|max:100'
+            'fromPath' => 'require|max:1000',
+            'toPath' => 'require|max:1000'
         ],
         [
             "token.require" => "未登录",
             "mail.require" => "未登录",
-            "fromName.require" => "没有数据",
-            "toName.require" => "没有数据"
+            "toPath.require" => "没有数据",
+            "fromPath.require" => "没有数据"
         ]);
         
         if (!$validate->check($request->post())) {
@@ -200,8 +183,25 @@ class Index extends Controller
             return json_encode(array("code"=>401,"data"=>"用户错误"));
         }
 
-        MarkBook::where(['user' => $request->post('mail'), 'folder'=> $request->post('fromName')])
-        ->update(['folder'=> $request->post('toName')]);
+        // 定义需要替换的前缀和新前缀
+        $oldFolder =  $request->post('fromPath');
+        $newFolder = $request->post('toPath');
+        //去除最后一个括号
+        $oldFolder = substr($oldFolder, 0, -1) ;
+        $newFolder = substr($newFolder, 0, -1) ;
+
+        $records = MarkBook::where('folder','like', $oldFolder. '%')->select();
+
+        if (count($records) == 0) {
+            echo "No records found with the specified prefix.";
+            return;
+        }
+
+        foreach ($records as $record) {
+            // 更新每条记录
+            $record->folder = $newFolder . substr($record->folder,  strlen($oldFolder));
+            $record->save();
+        }
         return json_encode(array("code"=>200));
     }
 
@@ -246,29 +246,43 @@ class Index extends Controller
         return json_encode(array("code"=>200,"data"=>$allMarkBook, "token"=>$user->pw));
     }
 
-    public function delMarkBook(Request $request)
+    public function delMarkBooks(Request $request)
     {
-        $token = $request->post("token");
-        $i = $request->post('i');
-        if(!$token || !$i)
-        {
-            return json_encode(array("code"=>401,"data"=>"参数为空"));
+
+        $validate = Validate::make([
+            'token'  => 'require|max:100',
+            'is' =>'require|max:4000',
+        ],
+        [
+            "token.require" => "未登录",
+            "is.require" => "没有数据",
+        ]);
+
+        if (!$validate->check($request->post())) {
+            return json_encode(array("code"=>401,"data"=>$validate->getError()));
         }
 
+        $token = $request->post("token");
+        $stris = $request->post('is');
+        //验证账号
         $user = User::get(['pw'=>$token]);
         if(!$user)
         {
             return json_encode(array("code"=>401,"data"=>"无用户"));
         }
-
-        $markbook = MarkBook::get(['i'=>$i]);
-        if(!$markbook)
+        //转换id
+        $is = json_decode($stris, true);
+        //通过id删除
+        for($i = 0; $i < count($is); $i ++)
         {
-            return json_encode(array("code"=>401,"data"=>"无书签"));
+            $markbook = MarkBook::get(['i' => $is[$i]]);
+            if(!$markbook)
+            {
+                return json_encode(array("code"=>401,"data"=>"无书签"));
+            }
+            $markbook->delete();
         }
-
-        $markbook->delete();
-        return json_encode(array("code"=>200,));
+        return json_encode(array("code"=>200));
     }
 
     public function delFolder(Request $request)
@@ -329,19 +343,19 @@ class Index extends Controller
         $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
         try {
             $code = rand(1000,9999);
-            Cache::set("VerifTime:".$ip , time(), 3);//防止疯狂提交错误邮箱
+            Cache::set("VerifTime:".$ip , time(), 4);//防止疯狂提交错误邮箱
             //服务器配置
             $mail->CharSet ="UTF-8";                     //设定邮件编码
             $mail->SMTPDebug = 0;                        // 调试模式输出
             $mail->isSMTP();                             // 使用SMTP
             $mail->Host = Config::get('smtp_host');                // SMTP服务器
             $mail->SMTPAuth = true;                      // 允许 SMTP 认证
-            $mail->Username = '*@xwtool.top';                // SMTP 用户名  即邮箱的用户名
+            $mail->Username = '';                // SMTP 用户名  即邮箱的用户名
             $mail->Password = '';             // SMTP 密码  部分邮箱是授权码(例如163邮箱)
             $mail->SMTPSecure = 'ssl';                    // 允许 TLS 或者ssl协议
             $mail->Port = 465;                            // 服务器端口 25 或者465 具体要看邮箱服务器支持
 
-            $mail->setFrom('hui@xwtool.top', 'MarkBook');  //发件人
+            $mail->setFrom('', 'MarkBook');  //发件人
             $mail->addAddress($userEmail, '');  // 收件人
             $mail->addReplyTo('hui@xwtool.top', 'info'); //回复的时候回复给哪个邮箱 建议和发件人一致
 
@@ -356,8 +370,10 @@ class Index extends Controller
             Cache::set("VerifTime:".$ip , time(), 30);
             return json_encode(array("code"=>200,"data"=>"发送成功"));
         } catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";//阿里每日2000条  腾讯500 超过会出错
-            //return json_encode(array("code"=>401,"data"=>"发送失败:请检查是否输入了正确的邮箱"));
+            if(Config::get('app_debug'))
+                echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";//阿里每日2000条  腾讯500 超过会出错
+            else
+                return json_encode(array("code"=>401,"data"=>"请检查是否输入了正确的邮箱,或者服务器问题"));
         }
     }
 }

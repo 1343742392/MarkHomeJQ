@@ -108,4 +108,19 @@ class Index
         echo Tool::GetSuffix("https://spring.io//manifest-0e3065c2bbd1ef7a320e80861393f1a6.json");
         
     }
+
+    //切换MarkBook的folder 形式"文件夹" <==> ['文件夹']
+    // public function ChangeFolder()
+    // {
+    //     $allMarkBook = MarkBook::all();
+    //     foreach ($allMarkBook as $markBook) {
+    //         if(substr($markBook->folder,0,2) == '["' && substr($markBook->folder,-2) == '"]') {
+                
+    //         }else{
+    //             $markBook->folder = '["'.$markBook->folder.'"]';
+
+    //         }
+    //         $markBook->save();
+    //     }
+    // }
 }

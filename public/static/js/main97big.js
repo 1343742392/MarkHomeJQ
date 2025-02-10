@@ -226,6 +226,8 @@ let markBooks = {
     },
     /**
      * 获取指定文件夹下所有子文件
+     * @query {字符数组} path  (例如['收藏夹', '视频'])
+     * 返回值是引用，修改会影响到原数据
      */
     getAllFiles:function(path){
         //路径必须是数组 和不能为空
@@ -423,7 +425,7 @@ let editFolderPage = null;
 let editFilePage = null;
 let editFileData = null;
 let editFolderPath = "";
-//保存选定文件 {id, name, url...}
+//保存选定文件 {i, name, url...}
 let checkFiles = [];
 //保存选定文件夹字符路径 ['[name1, name2, name3..]', '[name1, name2, name3..]']
 let checkFolders = [];
@@ -545,6 +547,11 @@ function back()
  * @returns 
  */
 function sendVerif(){
+    verifBtn.attr('disabled', true);
+    setTimeout(() => {
+        verifBtn.attr('disabled', false);
+    }, 30000);
+
     if(!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test(mailInput.val()))
     {
         showInfo("输入错误", "邮箱格式不对或者为空")
@@ -563,10 +570,7 @@ function sendVerif(){
             }
             if(mapRes['code']==200)
             {
-                verifBtn.attr('disabled', true);
-                setTimeout(() => {
-                    verifBtn.attr('disabled', false);
-                }, 30000);
+                showInfo("发送验证码成功", "验证码已发送到邮箱，请注意查收");
             }
         },
         'post'
@@ -936,7 +940,13 @@ function copyClick(event)
     {
         let strpath = checkFolders[i];
         let arrpath = JSON.parse(strpath);
-        let allfiles = markBooks.getAllFiles(arrpath); 
+        //深拷贝一下防止影响
+        let allfiles = JSON.parse(JSON.stringify( markBooks.getAllFiles(arrpath), function(k, v){
+            if(k == 'fileDiv' | k == 'itemDiv')
+                return undefined;
+            else
+                return v;
+        }));
         //去除文件夹下文件路径
         for(let j in allfiles)
         {
@@ -1008,6 +1018,7 @@ function deleteClick(event)
         checkFiles = checkFiles.concat(allfiles);
     }
 
+    showInfo("删除中", "删除中，请稍候");
     //删除文件和文件ui
     delFiles(checkFiles, function(seccess)
     {
@@ -1048,6 +1059,10 @@ function deleteClick(event)
             checkFiles = [];    
             checkFolders = [];
             setAllCheck(false);
+        }
+        else
+        {
+            showInfo("删除失败", "可能是选择文件或文件夹内文件过多，请分批删除");
         }
     });
 
@@ -1093,6 +1108,8 @@ function editObjectClick(event)
 function selectAllClick(event)
 {
     let checks = [];
+    //保存已经点击的数量
+    let clickCount = 0;
     //获取当前文件夹内所有文件的check
     let folder = markBooks.getFolder(activePath);
     if(!folder) return;
@@ -1102,19 +1119,39 @@ function selectAllClick(event)
     for(let i in files)
     {
         let file = files[i];
-        checks.push(file['fileDiv'].find('input'));
+        let check = file['fileDiv'].find('input');
+        //计数
+        if(!!check.prop('checked'))
+        {
+            clickCount++;
+        }
+        //保存
+        checks.push(check);
     }
     //获取当前文件夹内所有文件夹的check
     let folders = folder[folderName]['folders'];
     for(let i in folders)
     {
         let folder = folders[i];
-        checks.push(folder['itemDiv'].find('input'));
+        let check = folder['itemDiv'].find('input');
+        //计数
+        if(!!check.prop('checked'))
+        {
+            clickCount++;
+        }
+        //保存
+        checks.push(check);
     }
     //触发点击事件
     for(let i in checks)
     {
-        checks[i].click();
+        if(clickCount == checks.length)
+        {
+            checks[i].click();
+            continue
+        }
+        if(!checks[i].prop('checked'))
+            checks[i].click();
     }
 }
 
@@ -1149,9 +1186,12 @@ function editFile()
 
 
 
+    //转义
+    let ecodefileName = encodeURIComponent(fileName);
+    let ecodefileUrl = encodeURIComponent(fileUrl);
     //云修改
     request(
-        `mail=${userMail}&token=${userToken}&id=${editFileData['i']}&name=${fileName}&url=${fileUrl}`,
+        `mail=${userMail}&token=${userToken}&id=${editFileData['i']}&name=${ecodefileName}&url=${ecodefileUrl}`,
         url + '/index.php/index/index/editFile',
         (res)=>{
             saveResInfo(res);
@@ -1236,7 +1276,7 @@ function delFiles(files, back= null)
     {
         ids.push(files[i]['i']);
     }
-    let idsStr = JSON.stringify(ids);
+    let idsStr = encodeURIComponent( JSON.stringify(ids));
     request(
         `token=${userToken}&is=${idsStr}`,
         url + "/index.php/index/index/delMarkBooks",
@@ -1538,7 +1578,7 @@ function addFile()
         name = name.substring(0, 100);
 
     if(path.length > 100)
-        path  = path.substring(0, 100);
+        path  = path.substring(0, 900);
 
     if(addUrl.length > 2000)
     {
@@ -1589,6 +1629,9 @@ function addFilesNet(files, back)
         return value;
     });
 
+    //转义
+    strFiles = encodeURIComponent(strFiles);
+
     if(!strFiles) return;
 
     request(
@@ -1603,7 +1646,6 @@ function addFilesNet(files, back)
                 return back(true, files);
             }
             return back(false);
-            showInfo('导入失败', "导入失败!");
         },
         'post')
 }
@@ -1765,7 +1807,6 @@ function sync(back){
         });
 
         feature = MD5(feature);
-        console.log(feature)
         //和服务器对比
         request(
         "mail=" + userMail + "&token=" + userToken + "&feature=" + feature,
@@ -1859,27 +1900,52 @@ function importFiles(inputMB){
 }
 
 /**
+ * 导出html的主体
+ */
+function outputBody(folder = null, name = null)
+{
+    let folderName = "";
+    let files = [];
+    let subFolders = {};
+    if(folder == null)
+    {
+        folder = markBooks;
+        folderName = "root";
+        subFolders = markBooks['folders'];
+    }
+    else
+    {
+        folderName = name;
+        files = folder['files'];
+        subFolders = folder['folders'];
+    }
+    //添加文件夹
+    let strFolder = mBsFolderHtml.replace("{{folderName}}", folderName);
+    //添加文件
+
+    for(let index in files)
+    {
+        let strFile = mBsfileHtml.replace('{{url}}', files[index]['url']);
+        strFile = strFile.replace('{{name}}', files[index]['name']);
+        strFolder = strFolder + strFile;
+    }
+    //添加子文件夹
+    for(let subFolderName in subFolders)
+    {
+        strFolder = strFolder + outputBody(subFolders[subFolderName], subFolderName);
+    }
+    //添加文件夹结尾
+    strFolder = strFolder + `</DL><p>`;
+    return strFolder;
+}
+
+/**
  * 导出书签
  */
 function outputHtmlMB()
 {
-    let strFolder = "";
-    Object.keys(markBooks).forEach((key)=>
-    {
-        strFolder = strFolder + mBsFolderHtml.replace("{{folderName}}", key);
-        let files = markBooks[key]['files'];
-        for(let index in files)
-        {
-            let strFile = mBsfileHtml.replace('{{url}}', files[index]['url']);
-            strFile = strFile.replace('{{name}}', files[index]['name']);
-            strFolder = strFolder + strFile;
-        }
-        strFolder = strFolder + `
-        </DL><p>
+    let strFolder = outputBody();
 
-        `
-    })
-    
     const stringData = mBsHtml.replace("{{folders}}", strFolder);
     const blob = new Blob([stringData], {
         type: "text/plain;charset=utf-8"
@@ -2081,7 +2147,7 @@ window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,error
         " any: " + stack + 
         "  response:  " + responseInfo;
 
-        let shortInfo = errInfo.slice(0, 4000);
+        let shortInfo = encodeURIComponent( errInfo.slice(0, 4000));
         request(`mail=${userMail}&info=${shortInfo}`,"/index.php/index/index/jsError", function(data){
         }, 'post')
 }
