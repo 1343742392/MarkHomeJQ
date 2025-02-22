@@ -1,8 +1,8 @@
 -- MySQL dump 10.13  Distrib 5.7.14, for Win64 (x86_64)
 --
--- Host: 121.37.16.57    Database: mark_book
+-- Host: 119.91.62.163    Database: mark_book
 -- ------------------------------------------------------
--- Server version	5.7.41
+-- Server version	5.7.44
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -30,7 +30,7 @@ CREATE TABLE `error` (
   `utc_time` varchar(100) DEFAULT NULL,
   `i` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`i`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=296 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -47,10 +47,10 @@ CREATE TABLE `mark_book` (
   `create_time` int(11) NOT NULL DEFAULT '0',
   `update_time` int(11) DEFAULT '0',
   `i` int(11) NOT NULL AUTO_INCREMENT,
-  `folder` varchar(100) NOT NULL,
+  `folder` varchar(1000) NOT NULL,
   `ico` varchar(300) DEFAULT NULL,
   PRIMARY KEY (`i`)
-) ENGINE=InnoDB AUTO_INCREMENT=4534 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=47390 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,7 +68,7 @@ CREATE TABLE `user` (
   `i` int(11) NOT NULL AUTO_INCREMENT,
   `pw` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`i`)
-) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -85,7 +85,7 @@ CREATE TABLE `visit` (
   `i` int(11) NOT NULL AUTO_INCREMENT,
   `utc_time` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`i`)
-) ENGINE=InnoDB AUTO_INCREMENT=13278 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=135746 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,4 +101,4 @@ CREATE TABLE `visit` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-13 13:46:15
+-- Dump completed on 2025-02-22 18:40:03
