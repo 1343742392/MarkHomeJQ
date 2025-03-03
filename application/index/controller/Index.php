@@ -67,7 +67,8 @@ class Index extends Controller
 
         //获取数据库用户特征
         $userMarkBook = MarkBook::where('user', $mail)->field('name, url, i, folder')->select();
-        $thisFeature = Tool::GetMarkBookFeature($userMarkBook);
+        //return var_dump($userMarkBook->toArray());
+        $thisFeature = Tool::GetMarkBookFeature($userMarkBook->toArray());
         //比较
         if($thisFeature == $feature)
         {
@@ -115,7 +116,7 @@ class Index extends Controller
             if(mb_strlen($folders, 'utf8') < 1000)
                 $markbook->folder =    $folders;
             else
-                $markbook->folder=  '["name too long"]';
+                $markbook->folder=  '["folder too long"]';
             $markbook->ico = mb_strlen($ico, 'utf8') > 300 ? substr($ico, 0, 150) : $ico;
             $markbook->save();
             $files[$i] = $markbook;
@@ -190,7 +191,9 @@ class Index extends Controller
         $oldFolder = substr($oldFolder, 0, -1) ;
         $newFolder = substr($newFolder, 0, -1) ;
 
-        $records = MarkBook::where('folder','like', $oldFolder. '%')->select();
+        // echo  $oldFolder."--------------";
+        // echo Tool::escapeLikeString($oldFolder);
+        $records = MarkBook::where('folder','like', Tool::escapeLikeString($oldFolder). '%')->select();
 
         if (count($records) == 0) {
             echo "No records found with the specified prefix.";
@@ -251,7 +254,7 @@ class Index extends Controller
 
         $validate = Validate::make([
             'token'  => 'require|max:100',
-            'is' =>'require|max:4000',
+            'is' =>'require|max:20000',
         ],
         [
             "token.require" => "未登录",
@@ -320,6 +323,7 @@ class Index extends Controller
         $err->save();
         return json_encode(array("code"=>200,"data"=>""));
     }
+
 
     public function sendMail(Request $request)
     {

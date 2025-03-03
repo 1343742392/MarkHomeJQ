@@ -7,6 +7,12 @@ use think\Config;
 
 class Tool{
 
+    //匹配数据库斜杠转义
+    public static function  escapeLikeString($string) {
+        // 反斜杠需要被双写来转义
+        return str_replace('\\', '\\\\', $string);
+    }
+
     public static function GetIcoUrl($url)
     {
         $host = Tool::ParseUrlHost($url);

@@ -25,17 +25,17 @@ class Index
 
         
         
-        echo "<br>spring:";
-        echo Tool::GetIcoUrl('https://spring.io/docs/reference');  //herf 在rel前面的  还未处理
-        echo "<br>useTIme:".(time()-$startTime);
+        // echo "<br>spring:";
+        // echo Tool::GetIcoUrl('https://spring.io/docs/reference');  //herf 在rel前面的  还未处理
+        // echo "<br>useTIme:".(time()-$startTime);
         
-        echo "<br>cocos:";
-        echo Tool::GetIcoUrl("https://www.cocos.com/docs/");  //ssl
-        echo "<br>useTIme:".(time()-$startTime);
+        // echo "<br>cocos:";
+        // echo Tool::GetIcoUrl("https://www.cocos.com/docs/");  //ssl
+        // echo "<br>useTIme:".(time()-$startTime);
         
-        echo "<br>单词板:";
-        echo Tool::GetIcoUrl("http://47.114.55.241:81/");    //html解析
-        echo "<br>useTIme:".(time()-$startTime);
+        // echo "<br>单词板:";
+        // echo Tool::GetIcoUrl("http://47.114.55.241:81/");    //html解析
+        // echo "<br>useTIme:".(time()-$startTime);
 
         // echo "<br>tuite:";
         // echo Tool::GetIcoUrl("https://twitter.com");    //不可访问
@@ -66,8 +66,8 @@ class Index
 
     public function CurlTest()
     {
-        echo "res";
-        echo Tool::Get('https://www.cocos.com/docs/');
+        // echo "res";
+        // echo Tool::Get('https://www.cocos.com/docs/');
     }
 
     public function DbTest()
@@ -98,14 +98,14 @@ class Index
 
 
 
-        // $s = substr('["哈","呵7"]',0,-1);
+        // $s = '["[\\\\\\"\\\\(';
         // $m = MarkBook::where('folder','like',$s.'%')->select();
         // return dump($m);
     }
 
     public function GetSuffix()
     {
-        echo Tool::GetSuffix("https://spring.io//manifest-0e3065c2bbd1ef7a320e80861393f1a6.json");
+        // echo Tool::GetSuffix("https://spring.io//manifest-0e3065c2bbd1ef7a320e80861393f1a6.json");
         
     }
 
