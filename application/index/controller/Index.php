@@ -112,7 +112,7 @@ class Index extends Controller
             $markbook->name = mb_strlen($name, 'utf8') > 100 ?mb_substr($name, 0, 50, 'utf8') : $name;
             $url = $files[$i]['url'];
             $markbook->url = mb_strlen($url, 'utf8') > 2000 ? mb_substr($url, 0, 1000, 'utf8') : $url;
-            $folders = json_encode($files[$i]['folder'], JSON_UNESCAPED_UNICODE);
+            $folders = json_encode($files[$i]['folder'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             if(mb_strlen($folders, 'utf8') < 1000)
                 $markbook->folder =    $folders;
             else
@@ -191,15 +191,11 @@ class Index extends Controller
         $oldFolder = substr($oldFolder, 0, -1) ;
         $newFolder = substr($newFolder, 0, -1) ;
 
-        // echo  $oldFolder."--------------";
-        // echo Tool::escapeLikeString($oldFolder);
         $records = MarkBook::where('folder','like', Tool::escapeLikeString($oldFolder). '%')->select();
 
         if (count($records) == 0) {
-            echo "No records found with the specified prefix.";
-            return;
+            return json_encode(array("code"=>401, "data" => "没有文件夹"));
         }
-
         foreach ($records as $record) {
             // 更新每条记录
             $record->folder = $newFolder . substr($record->folder,  strlen($oldFolder));
@@ -323,7 +319,6 @@ class Index extends Controller
         $err->save();
         return json_encode(array("code"=>200,"data"=>""));
     }
-
 
     public function sendMail(Request $request)
     {

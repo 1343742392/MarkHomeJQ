@@ -96,10 +96,10 @@ class Index
         // $m->folder=  addslashes('["\u54c8"]');
         // $m->save();
 
+        // return  json_encode([   '\\/'       ],JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-
-        // $s = '["[\\\\\\"\\\\(';
-        // $m = MarkBook::where('folder','like',$s.'%')->select();
+        // $s = '["[\\\\\\"\\\\\\\\(^o^)\\\\\\/~\\\\\\"';
+        // $m = MarkBook::where('folder','like',Tool::escapeLikeString( $s).'%')->select();
         // return dump($m);
     }
 
