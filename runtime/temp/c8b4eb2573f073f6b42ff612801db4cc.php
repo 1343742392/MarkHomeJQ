@@ -1,4 +1,4 @@
-<?php /*a:3:{s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\index\index.html";i:1739246626;s:77:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\markbook.html";i:1733740769;s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
+<?php /*a:3:{s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\index\index.html";i:1755169654;s:77:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\markbook.html";i:1733740769;s:73:"D:\MyFile\Code\Website\MarkHomeJQ\application\index\view\common\back.html";i:1675233900;}*/ ?>
 <!DOCTYPE html>
 <html lang="zh" style="height:100%">
 <head>
@@ -15,7 +15,7 @@
     <!-- <script type="module" src="static/js/request"></script> -->
     <script type="text/javascript" src="static/js/htmlparser.js"></script>
 
-    <script type="module" src="static/js/main97.js"></script>
+    <script type="module" src="static/js/main98.js"></script>
     <script  type="text/javascript">
   
     </script>

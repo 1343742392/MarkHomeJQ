@@ -1,3 +1,4 @@
+
 import { request } from './request.js';
 import {setCookie, getCookie, clearCookie} from './cookie-tool.js';
 import {binaryToUtf8} from './utf8-1.js';
@@ -757,6 +758,7 @@ function setEvent()
         $('#homeBackBtn').show();
         $('#editBtns').show()
 
+        setFolderMargin()
         setAllCheck(false)
     })
 
@@ -1024,21 +1026,21 @@ function deleteClick(event)
     {
         if(seccess)
         {
-
+            //删除文件夹和ui
             for(let i in checkFolders)
             {
-                //删除ui
+                //删除勾选的文件夹ui
                 let arrPath = JSON.parse(checkFolders[i]);
                 let folder = markBooks.getFolder(arrPath);
                 let folderName = arrPath[arrPath.length - 1];
                 let itemDiv = folder[folderName]['itemDiv'];
-                let folderDiv = folder[folderName]['folderDiv'];
+                let folderDiv = folder[folderName]['folderDiv'];//快捷文件夹不过这里应该删不了
                 if(!!folderDiv) folderDiv.remove();
                 itemDiv.remove();
-
+                delete folder[folderName];
             }
 
-            //如果父文件夹没有文件和文件夹了，删除父文件夹
+            //如果父文件夹没有文件和文件夹了，删除父快捷文件夹
             var folder = markBooks.getFolder(activePath);
             let folderName = activePath[activePath.length - 1];
             //是否还有文件和文件夹
@@ -1046,14 +1048,18 @@ function deleteClick(event)
             let childrenFolders = folder[folderName]['folders'];
             if(parentFiles.length == 0 && Object.keys(childrenFolders).length == 0)
             {
+                //删除左边快捷文件夹
                 let folderDiv = folder[folderName]['folderDiv'];
                 if(!!folderDiv) {
                     folderDiv.remove();
+                    //删除数据
+                    delete folder[folderName];
+                    //如果当前文件夹是激活文件夹，清空激活文件夹
+                    if(folderName == activePath[activePath.length - 1])
+                        activePath = [];
+                    
+                    setFolderMargin()
                 }
-                //删除数据
-                delete folder[folderName];
-                activePath.pop();
-                clickFirst();
             }
 
             checkFiles = [];    
@@ -1287,7 +1293,7 @@ function delFiles(files, back= null)
             {
                 for(let i in files)
                 {
-                    //删除ui
+                    //删除勾选的file文件夹内所有子file ui
                     let file = files[i];
                     let fileDiv = file['fileDiv'];  
                     if(!!fileDiv)//未显示的file是不需要删除的
@@ -1383,7 +1389,7 @@ function addFolderLocal(path = ['其他'])
         //判断当前路径是否已经存在
         if(markBooks.getFolder(localPath) == null) 
         {
-            //插入左侧ui
+            //插入左侧快捷文件夹ui
             if(i == 0)
             {
                 foldersDiv.append(folderHtml.replace('{{name}}', name));
@@ -1430,6 +1436,8 @@ function toggleFolder(path)
     let folderName = path[path.length - 1]
     let folder = markBooks.getFolder(path);
 
+    //如果folderName不存在folder 这个文件夹可能已经删除
+    if(!(folderName in folder))return;
     let files = folder[folderName]['files'];
     if(!!files)
     {
@@ -1503,13 +1511,14 @@ function folderClick(obj)
 {
     let sClicikFolderPath = obj.data['path'];
     let clickFolderPath = JSON.parse(sClicikFolderPath);
-    let path = JSON.parse(obj['data']['path']);
-    let strActivePath = JSON.stringify(activePath);
+    let path = JSON.parse(obj['data']['path']);//现在点击的文件夹
+    let strActivePath = JSON.stringify(activePath);//现在已经点开的文件夹
     if(strActivePath!= sClicikFolderPath)
     {
+        //不是点击同一个文件夹
         if(activePath.length != 0)
         {
-            toggleFolder(activePath);//关掉
+            toggleFolder(activePath);//关掉已经打开的
             if(homeState == 'edit') 
             {
                 setAllCheck(true);//关掉勾选
@@ -1518,7 +1527,7 @@ function folderClick(obj)
             }
 
         }
-        toggleFolder(clickFolderPath);//打开
+        toggleFolder(clickFolderPath);//打开当前点击的
         activePath = path;
 
         //设置勾选
@@ -1526,6 +1535,7 @@ function folderClick(obj)
     }
     else
     {
+        //点击同一个文件夹
         if(homeState == 'edit')
         {
             let folderName = clickFolderPath[clickFolderPath.length - 1];
@@ -1717,7 +1727,7 @@ function addFileView(file)
 function parseMarkBooks(importMB){
     let record = false;
     let folders = [];  // [祖，父，儿.......]
-    folders.push('其他');
+
     let files = [];
     let href = "";
     let tagName = "";
@@ -1750,7 +1760,10 @@ function parseMarkBooks(importMB){
                 
             if(tagName == 'a')  //保存文件
             {
-                if(!folders[folders.length - 1])console.log('error')
+                if(!folders[folders.length - 1])
+                {
+                    folders.push('其他');
+                }
                 if( text.trim() == "")
                      text = '未命名'; //如果是空的就命名为空
                 let path = [];
@@ -2014,7 +2027,7 @@ function dropdown(data)
 /**
  * 
  * 添加书签页下拉框里面元素点击事件
- * @param {字符串} folderName {}
+ * @param {字符串} folderName {原本的文件夹名字}
  */
 function selectClick(folderName)
 { 
@@ -2151,3 +2164,10 @@ window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,error
         }, 'post')
 }
 
+
+
+
+
+/**
+ * bug
+ */
