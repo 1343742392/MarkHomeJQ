@@ -2,6 +2,7 @@
 import { request } from './request.js';
 import {setCookie, getCookie, clearCookie} from './cookie-tool.js';
 import {binaryToUtf8} from './utf8-1.js';
+import {bencode, bdecode} from './safe-base64.js';
 let url = "";
 
 /**
@@ -1211,7 +1212,7 @@ function editFile()
                 file['url'] = fileUrl;
                 //更新ui
                 let fileDiv = file['fileDiv'];
-                fileDiv.attr('title', file['url']);
+                fileDiv.attr('title',bencode( file['url']));
                 let nameDiv = fileDiv.find('.file-name.one-line');
                 nameDiv.text(file['name']);
 
@@ -1566,7 +1567,8 @@ function fileClick(obj)
     }
     else
     {
-        window.open (obj.currentTarget.getAttribute('title'),'newwindow'+obj.currentTarget.getAttribute('title'))
+        let url = bdecode(obj.currentTarget.getAttribute('title'));
+        window.open (url,'newwindow' + url)
     }
 }
 
@@ -1698,7 +1700,8 @@ function addFileView(file)
     let thisFileHtml = fileHtml.replace('{{icon}}', host + '/favicon.ico');
     thisFileHtml =thisFileHtml.replace(/{{name}}/g, file['name']);
     thisFileHtml = thisFileHtml.replace("{{i}}", file['i']);
-    thisFileHtml = thisFileHtml.replace('{{url}}', file['url']);
+    
+    thisFileHtml = thisFileHtml.replace('{{url}}', bencode(file['url']));
     //contentdiv里面最后一个元素是不是backhtml
     let lastObj = contentDiv.children().last();
     let fileDiv = $(thisFileHtml);
@@ -1938,7 +1941,7 @@ function outputBody(folder = null, name = null)
 
     for(let index in files)
     {
-        let strFile = mBsfileHtml.replace('{{url}}', files[index]['url']);
+        let strFile = mBsfileHtml.replace('{{url}}', bencode(files[index]['url']));
         strFile = strFile.replace('{{name}}', files[index]['name']);
         strFolder = strFolder + strFile;
     }
