@@ -707,6 +707,12 @@ function setEvent()
     //添加页下拉
     $('#dropdown').click(dropdown);
 
+    //手动改动文件夹路径时收起下拉面板，避免改完后再点到面板里的旧项
+    pathInput.on('input', function()
+    {
+        folderSelectDiv[0].style.display = 'none';
+    });
+
     //添加事件
     addFileBtn.click(function()
     {
@@ -2042,8 +2048,9 @@ function selectClick(folderName)
         pathValue = folderName
     pathInput.val(pathValue)
     //修改下拉框
-    let folder = markBooks.getFolder(pathValue.split(">"))[folderName]
-    let folders = folder['folders'];
+    let folder = markBooks.getFolder(pathValue.split(">"))
+    if(!folder) return;  //路径不存在，直接结束
+    let folders = folder[folderName]['folders'];
     if(Object.keys(folders).lenght != 0)
         setSelect(folders)
 }
